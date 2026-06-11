@@ -1119,7 +1119,39 @@ const NAV_MAP = {
   'screen-add': 'nav-add',
 };
 
+// ════════════════════════════════════════════
+// PROTECTION PROPRIÉTAIRE (PIN)
+// ════════════════════════════════════════════
+const PIN_KEY = 'cave_papounet_pin';
+
+function requireOwner(cb) {
+  if (sessionStorage.getItem('cave_unlocked') === '1') { cb(); return; }
+  const savedPin = localStorage.getItem(PIN_KEY);
+  if (!savedPin) {
+    const newPin = prompt('🔐 Première fois !\nChoisis un code PIN (4 chiffres ou plus) pour protéger ta cave.\nSeul ce code permettra de modifier les bouteilles.');
+    if (!newPin || newPin.trim().length < 4) { toast('❌ Code trop court (4 caractères minimum)'); return; }
+    localStorage.setItem(PIN_KEY, newPin.trim());
+    sessionStorage.setItem('cave_unlocked', '1');
+    toast('🔐 Code créé — cave déverrouillée');
+    cb();
+    return;
+  }
+  const entered = prompt('🔐 Code PIN de la cave :');
+  if (entered === null) return;
+  if (entered.trim() === savedPin) {
+    sessionStorage.setItem('cave_unlocked', '1');
+    toast('🔓 Cave déverrouillée');
+    cb();
+  } else {
+    toast('❌ Code incorrect');
+  }
+}
+
 function showScreen(id) {
+  if (id === 'screen-add' && sessionStorage.getItem('cave_unlocked') !== '1') {
+    requireOwner(() => showScreen('screen-add'));
+    return;
+  }
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1236,27 +1268,33 @@ function closeModal(e) {
 }
 
 function editFromModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-  openEditForm(modalBottleId);
+  requireOwner(() => {
+    document.getElementById('modal-overlay').classList.remove('open');
+    openEditForm(modalBottleId);
+  });
 }
 
 function deleteFromModal() {
-  if (!confirm('Supprimer cette bouteille ?')) return;
-  cave = cave.filter(b => b.id !== modalBottleId);
-  saveCave(cave);
-  document.getElementById('modal-overlay').classList.remove('open');
-  renderCave();
-  toast('🗑️ Bouteille supprimée');
+  requireOwner(() => {
+    if (!confirm('Supprimer cette bouteille ?')) return;
+    cave = cave.filter(b => b.id !== modalBottleId);
+    saveCave(cave);
+    document.getElementById('modal-overlay').classList.remove('open');
+    renderCave();
+    toast('🗑️ Bouteille supprimée');
+  });
 }
 
 function toggleEmpty() {
-  const b = cave.find(x => x.id === modalBottleId);
-  if (!b) return;
-  b.empty = !b.empty;
-  saveCave(cave);
-  updateEmptyBtn(b.empty);
-  renderCave();
-  toast(b.empty ? '📭 Bouteille marquée vide' : '✅ Bouteille remise en cave');
+  requireOwner(() => {
+    const b = cave.find(x => x.id === modalBottleId);
+    if (!b) return;
+    b.empty = !b.empty;
+    saveCave(cave);
+    updateEmptyBtn(b.empty);
+    renderCave();
+    toast(b.empty ? '📭 Bouteille marquée vide' : '✅ Bouteille remise en cave');
+  });
 }
 
 function updateEmptyBtn(isEmpty) {
