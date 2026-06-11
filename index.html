@@ -360,6 +360,7 @@ header {
 .region-card.active { border-color: var(--or); background: linear-gradient(135deg,#fdf6e3,#fef9ee); box-shadow: 0 3px 10px rgba(184,134,11,0.2); }
 .region-card .r-flag { font-size:1.5rem; display:block; margin-bottom:4px; }
 .region-card .r-name { font-size:0.82rem; font-weight:800; color:var(--brun); display:block; }
+.region-card .r-desc { font-size:0.68rem; color:#9a7a5a; display:block; margin-top:3px; line-height:1.3; }
 
 /* ── RÉSULTATS ── */
 .result-card {
@@ -1462,22 +1463,36 @@ function strengthPick(el) {
   setTimeout(() => wizNext(4), 300);
 }
 
-const REGION_FLAGS = {
-  'Highlands':'🏔️','Speyside':'🌊','Islay':'🌫️','Islands':'🏝️',
-  'Campbeltown':'⚓','Lowlands':'🌾','Japon':'🇯🇵','Irlande':'🇮🇪',
-  'France':'🇫🇷','Taïwan':'🇹🇼','USA':'🇺🇸','Écosse':'🥃',
+const REGION_INFO = {
+  'Highlands':    { flag:'🏔️', label:'Écosse · Highlands',   desc:'Fruité, robuste, grands espaces' },
+  'Speyside':     { flag:'🌊', label:'Écosse · Speyside',    desc:'Le plus doux et fruité d\'Écosse' },
+  'Islay':        { flag:'🔥', label:'Écosse · Islay',       desc:'L\'île des whiskies très fumés' },
+  'Islands':      { flag:'🏝️', label:'Écosse · Les Îles',   desc:'Marin, légèrement fumé' },
+  'Campbeltown':  { flag:'⚓', label:'Écosse · Campbeltown', desc:'Salin, terreux, caractère unique' },
+  'Lowlands':     { flag:'🌾', label:'Écosse · Lowlands',    desc:'Léger, floral, facile à boire' },
+  'Écosse':       { flag:'🥃', label:'Écosse · Blended',     desc:'Assemblage doux et accessible' },
+  'Japon':        { flag:'🇯🇵', label:'Japon',               desc:'Délicat, raffiné, équilibré' },
+  'Irlande':      { flag:'🇮🇪', label:'Irlande',             desc:'Triple distillé, rond et léger' },
+  'France':       { flag:'🇫🇷', label:'France',              desc:'Whisky français, souvent fruité' },
+  'Taïwan':       { flag:'🇹🇼', label:'Taïwan',              desc:'Tropical, sucré, moderne' },
+  'USA':          { flag:'🇺🇸', label:'États-Unis',          desc:'Bourbon doux, vanille, caramel' },
 };
 
 function buildRegionGrid() {
   const regions = [...new Set(loadCave().map(b => b.region).filter(Boolean))].sort();
   const grid = document.getElementById('region-grid');
-  grid.innerHTML = regions.map(r => `
-    <div class="region-card" data-region="${r}" onclick="regionPick(this)">
-      <span class="r-flag">${REGION_FLAGS[r] || '🗺️'}</span>
-      <span class="r-name">${r}</span>
-    </div>`).join('') + `
+  grid.innerHTML = regions.map(r => {
+    const info = REGION_INFO[r] || { flag:'🗺️', label: r, desc:'' };
+    return `<div class="region-card" data-region="${r}" onclick="regionPick(this)">
+      <span class="r-flag">${info.flag}</span>
+      <span class="r-name">${info.label}</span>
+      <span class="r-desc">${info.desc}</span>
+    </div>`;
+  }).join('') + `
     <div class="region-card" data-region="" onclick="regionPick(this)">
-      <span class="r-flag">🎲</span><span class="r-name">Peu importe</span>
+      <span class="r-flag">🎲</span>
+      <span class="r-name">Peu importe</span>
+      <span class="r-desc">Montre-moi tout</span>
     </div>`;
 }
 
