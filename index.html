@@ -101,73 +101,107 @@ header {
 }
 .btn-secondary:hover { border-color: var(--or); }
 
-/* ── RECHERCHE / WIZARD ── */
+/* ── WIZARD SIMPLIFIÉ ── */
 .wizard-step { display: none; }
 .wizard-step.active { display: block; }
-.wizard-title {
-  font-size: 1.15rem; font-weight: 900; color: var(--brun);
-  margin-bottom: 6px;
+
+.wiz-question {
+  font-size: 1.25rem; font-weight: 900; color: var(--brun);
+  margin-bottom: 6px; line-height: 1.3;
 }
-.wizard-sub { font-size: 0.85rem; color: var(--brun2); margin-bottom: 20px; }
+.wiz-hint { font-size: 0.83rem; color: var(--brun2); margin-bottom: 20px; }
 
 .progress-bar {
-  background: #e8d5b0;
-  border-radius: 99px;
-  height: 6px;
-  margin-bottom: 22px;
-  overflow: hidden;
+  background: #e8d5b0; border-radius: 99px;
+  height: 6px; margin-bottom: 24px; overflow: hidden;
 }
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--or), var(--or-vif));
-  border-radius: 99px;
-  transition: width 0.4s ease;
+  border-radius: 99px; transition: width 0.4s ease;
 }
 
-.tag-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 6px;
+/* Grandes cartes d'ambiance */
+.mood-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
 }
-.tag {
-  padding: 8px 14px;
-  border-radius: 99px;
-  border: 2px solid #e8d5b0;
-  background: white;
-  font-size: 0.85rem;
-  color: var(--brun2);
+.mood-card {
+  border: 2.5px solid #e8d5b0;
+  border-radius: 16px;
+  padding: 16px 10px;
+  text-align: center;
   cursor: pointer;
+  background: white;
   transition: all 0.15s;
   user-select: none;
 }
-.tag:hover  { border-color: var(--or); }
-.tag.active { background: var(--or); border-color: var(--or); color: white; font-weight: 700; }
+.mood-card:hover { border-color: var(--or); transform: translateY(-2px); }
+.mood-card.active {
+  border-color: var(--or);
+  background: linear-gradient(135deg, #fdf6e3, #fef9ee);
+  box-shadow: 0 4px 12px rgba(184,134,11,0.2);
+}
+.mood-card .mood-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
+.mood-card .mood-label { font-size: 0.88rem; font-weight: 800; color: var(--brun); display: block; }
+.mood-card .mood-desc  { font-size: 0.72rem; color: #9a7a5a; display: block; margin-top: 2px; }
 
-.range-row {
-  margin-bottom: 18px;
-}
-.range-row label {
+/* Boutons de choix simple */
+.choice-row {
   display: flex;
-  justify-content: space-between;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--brun);
-  margin-bottom: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
 }
-.range-row input[type=range] {
-  width: 100%;
-  accent-color: var(--or);
-  height: 6px;
-}
-.range-labels {
+.choice-btn {
   display: flex;
-  justify-content: space-between;
-  font-size: 0.72rem;
-  color: #9a7a5a;
-  margin-top: 4px;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 2.5px solid #e8d5b0;
+  border-radius: 14px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  text-align: left;
+}
+.choice-btn:hover { border-color: var(--or); }
+.choice-btn.active {
+  border-color: var(--or);
+  background: linear-gradient(135deg, #fdf6e3, #fef9ee);
+  box-shadow: 0 4px 12px rgba(184,134,11,0.2);
+}
+.choice-btn .choice-icon  { font-size: 1.6rem; flex-shrink: 0; }
+.choice-btn .choice-label { font-size: 0.95rem; font-weight: 800; color: var(--brun); }
+.choice-btn .choice-sub   { font-size: 0.78rem; color: #9a7a5a; margin-top: 1px; }
+
+/* Image bouteille */
+.bottle-img-wrap {
+  width: 52px; height: 52px; flex-shrink: 0;
+  border-radius: 10px; overflow: hidden;
+  background: var(--gris);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem;
+  position: relative;
+}
+.bottle-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+  position: absolute; inset: 0;
+}
+.result-img {
+  width: 80px; height: 100px; flex-shrink: 0;
+  border-radius: 12px; overflow: hidden;
+  background: linear-gradient(160deg, #f5f0e8, #e8d5b0);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.6rem;
+  position: relative;
+}
+.result-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  position: absolute; inset: 0;
 }
 
 /* ── RÉSULTATS ── */
@@ -452,94 +486,104 @@ header {
   <!-- ════ RECHERCHE / WIZARD ════ -->
   <div id="screen-search" class="screen">
     <div class="card">
-      <div class="progress-bar"><div class="progress-fill" id="wiz-progress" style="width:25%"></div></div>
+      <div class="progress-bar"><div class="progress-fill" id="wiz-progress" style="width:33%"></div></div>
 
-      <!-- Étape 1 : Type -->
+      <!-- Étape 1 : Ambiance -->
       <div class="wizard-step active" id="step-1">
-        <div class="wizard-title">Quel type de whisky ?</div>
-        <div class="wizard-sub">Choisis un ou plusieurs styles.</div>
-        <div class="tag-grid" id="tags-type">
-          <div class="tag" data-v="single malt">Single Malt</div>
-          <div class="tag" data-v="blended">Blended</div>
-          <div class="tag" data-v="single grain">Single Grain</div>
-          <div class="tag" data-v="bourbon">Bourbon</div>
-          <div class="tag" data-v="rye">Rye</div>
-          <div class="tag" data-v="japanese">Japonais</div>
-          <div class="tag" data-v="irish">Irlandais</div>
-          <div class="tag" data-v="indifférent" onclick="tagSelectOnly(this,'tags-type')">Peu importe 🤷</div>
+        <div class="wiz-question">Ce soir, tu as envie de quoi ?</div>
+        <div class="wiz-hint">Choisis ce qui te tente le plus.</div>
+        <div class="mood-grid">
+          <div class="mood-card" data-mood="fruity" onclick="moodPick(this)">
+            <span class="mood-icon">🍎</span>
+            <span class="mood-label">Fruité &amp; Léger</span>
+            <span class="mood-desc">Pomme, poire, agrumes</span>
+          </div>
+          <div class="mood-card" data-mood="sweet" onclick="moodPick(this)">
+            <span class="mood-icon">🍯</span>
+            <span class="mood-label">Doux &amp; Sucré</span>
+            <span class="mood-desc">Miel, vanille, caramel</span>
+          </div>
+          <div class="mood-card" data-mood="smoky" onclick="moodPick(this)">
+            <span class="mood-icon">🔥</span>
+            <span class="mood-label">Fumé &amp; Mystérieux</span>
+            <span class="mood-desc">Tourbe, cendres, cuir</span>
+          </div>
+          <div class="mood-card" data-mood="rich" onclick="moodPick(this)">
+            <span class="mood-icon">🍫</span>
+            <span class="mood-label">Riche &amp; Complexe</span>
+            <span class="mood-desc">Chocolat, café, épices</span>
+          </div>
+          <div class="mood-card" data-mood="maritime" onclick="moodPick(this)">
+            <span class="mood-icon">🌊</span>
+            <span class="mood-label">Maritime &amp; Salin</span>
+            <span class="mood-desc">Algues, iode, mer</span>
+          </div>
+          <div class="mood-card" data-mood="surprise" onclick="moodPick(this)">
+            <span class="mood-icon">🎲</span>
+            <span class="mood-label">Surprise !</span>
+            <span class="mood-desc">Laisse la cave décider</span>
+          </div>
         </div>
-        <button class="btn-primary" style="margin-top:16px" onclick="wizNext(2)">Suivant →</button>
       </div>
 
-      <!-- Étape 2 : Arômes -->
+      <!-- Étape 2 : Fumée -->
       <div class="wizard-step" id="step-2">
-        <div class="wizard-title">Quels arômes recherches-tu ?</div>
-        <div class="wizard-sub">Plusieurs choix possibles.</div>
-        <div class="tag-grid" id="tags-arome">
-          <div class="tag" data-v="tourbé">🌿 Tourbé / Fumé</div>
-          <div class="tag" data-v="fruité">🍎 Fruité</div>
-          <div class="tag" data-v="floral">🌸 Floral</div>
-          <div class="tag" data-v="miel">🍯 Miel / Vanille</div>
-          <div class="tag" data-v="épicé">🌶️ Épicé</div>
-          <div class="tag" data-v="chocolat">🍫 Chocolat / Café</div>
-          <div class="tag" data-v="maritime">🌊 Maritime / Iodé</div>
-          <div class="tag" data-v="caramel">🍮 Caramel / Boisé</div>
-          <div class="tag" data-v="agrumes">🍋 Agrumes</div>
-          <div class="tag" data-v="sec">Sec / Minéral</div>
+        <div class="wiz-question">Tu aimes la fumée ?</div>
+        <div class="wiz-hint">Le côté "feu de cheminée" du whisky.</div>
+        <div class="choice-row">
+          <div class="choice-btn" data-smoke="0" onclick="smokePick(this)">
+            <span class="choice-icon">🌱</span>
+            <div>
+              <div class="choice-label">Non merci</div>
+              <div class="choice-sub">Je préfère quelque chose de doux</div>
+            </div>
+          </div>
+          <div class="choice-btn" data-smoke="2" onclick="smokePick(this)">
+            <span class="choice-icon">🌿</span>
+            <div>
+              <div class="choice-label">Un petit peu</div>
+              <div class="choice-sub">Une touche discrète, pourquoi pas</div>
+            </div>
+          </div>
+          <div class="choice-btn" data-smoke="4" onclick="smokePick(this)">
+            <span class="choice-icon">🔥</span>
+            <div>
+              <div class="choice-label">J'adore !</div>
+              <div class="choice-sub">Plus c'est fumé, mieux c'est</div>
+            </div>
+          </div>
         </div>
-        <div style="display:flex;gap:10px;margin-top:16px">
-          <button class="btn-secondary" style="margin:0" onclick="wizNext(1)">← Retour</button>
-          <button class="btn-primary"   style="margin:0" onclick="wizNext(3)">Suivant →</button>
-        </div>
+        <button class="btn-secondary" onclick="wizNext(1)" style="margin-top:4px">← Retour</button>
       </div>
 
-      <!-- Étape 3 : Intensité & force -->
+      <!-- Étape 3 : Force -->
       <div class="wizard-step" id="step-3">
-        <div class="wizard-title">Quelle intensité ?</div>
-        <div class="wizard-sub">Règle selon tes préférences.</div>
-        <div class="range-row">
-          <label>Tourbe <span id="lbl-peat">—</span></label>
-          <input type="range" id="r-peat" min="0" max="5" value="0" oninput="updateRangeLabel('peat',this.value)">
-          <div class="range-labels"><span>Aucune</span><span>Légère</span><span>Intense</span></div>
+        <div class="wiz-question">La force, c'est comment ?</div>
+        <div class="wiz-hint">Le taux d'alcool et la puissance en bouche.</div>
+        <div class="choice-row">
+          <div class="choice-btn" data-strength="0" onclick="strengthPick(this)">
+            <span class="choice-icon">😌</span>
+            <div>
+              <div class="choice-label">Tout doux</div>
+              <div class="choice-sub">Facile à boire, accessible</div>
+            </div>
+          </div>
+          <div class="choice-btn" data-strength="2" onclick="strengthPick(this)">
+            <span class="choice-icon">🥃</span>
+            <div>
+              <div class="choice-label">Équilibré</div>
+              <div class="choice-sub">Ni trop fort, ni trop léger</div>
+            </div>
+          </div>
+          <div class="choice-btn" data-strength="4" onclick="strengthPick(this)">
+            <span class="choice-icon">💪</span>
+            <div>
+              <div class="choice-label">Bien corsé</div>
+              <div class="choice-sub">Puissant, intense, qui tient debout</div>
+            </div>
+          </div>
         </div>
-        <div class="range-row">
-          <label>Force <span id="lbl-strength">—</span></label>
-          <input type="range" id="r-strength" min="0" max="4" value="2" oninput="updateRangeLabel('strength',this.value)">
-          <div class="range-labels"><span>Doux</span><span>Équilibré</span><span>Puissant</span></div>
-        </div>
-        <div class="range-row">
-          <label>Âge préféré <span id="lbl-age">—</span></label>
-          <input type="range" id="r-age" min="0" max="4" value="0" oninput="updateRangeLabel('age',this.value)">
-          <div class="range-labels"><span>NAS</span><span>10-15 ans</span><span>25 ans+</span></div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:16px">
-          <button class="btn-secondary" style="margin:0" onclick="wizNext(2)">← Retour</button>
-          <button class="btn-primary"   style="margin:0" onclick="wizNext(4)">Suivant →</button>
-        </div>
-      </div>
-
-      <!-- Étape 4 : Région -->
-      <div class="wizard-step" id="step-4">
-        <div class="wizard-title">Une région préférée ?</div>
-        <div class="wizard-sub">Optionnel — laisse vide pour explorer.</div>
-        <div class="tag-grid" id="tags-region">
-          <div class="tag" data-v="Highlands">🏔️ Highlands</div>
-          <div class="tag" data-v="Lowlands">🌾 Lowlands</div>
-          <div class="tag" data-v="Speyside">🌊 Speyside</div>
-          <div class="tag" data-v="Islay">🌫️ Islay</div>
-          <div class="tag" data-v="Campbeltown">⚓ Campbeltown</div>
-          <div class="tag" data-v="Islands">🏝️ Islands</div>
-          <div class="tag" data-v="Japon">🇯🇵 Japon</div>
-          <div class="tag" data-v="USA">🇺🇸 USA</div>
-          <div class="tag" data-v="Irlande">🇮🇪 Irlande</div>
-          <div class="tag" data-v="France">🇫🇷 France</div>
-          <div class="tag" data-v="Taïwan">🇹🇼 Taïwan</div>
-          <div class="tag" data-v="indifférent" onclick="tagSelectOnly(this,'tags-region')">🗺️ Surprends-moi</div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:16px">
-          <button class="btn-secondary" style="margin:0" onclick="wizNext(3)">← Retour</button>
-          <button class="btn-primary"   style="margin:0" onclick="computeResults()">🔍 Trouver mes bouteilles</button>
-        </div>
+        <button class="btn-secondary" onclick="wizNext(2)" style="margin-top:4px">← Retour</button>
       </div>
     </div>
 
@@ -861,12 +905,12 @@ function renderCave(filter) {
   }
   el.innerHTML = filtered.map(b => `
     <div class="cave-item" onclick="openModal('${b.id}')">
-      <div class="bottle-icon">🥃</div>
+      ${bottleImgHtml(b)}
       <div class="cave-item-info">
         <div class="cave-item-name">${b.name}</div>
         <div class="cave-item-sub">${[b.region, b.type, b.age ? b.age+' ans' : null].filter(Boolean).join(' · ')}</div>
       </div>
-      <div style="text-align:right">
+      <div style="text-align:right;flex-shrink:0">
         <div class="cave-item-abv">${b.abv ? b.abv+'%' : ''}</div>
         ${b.rating ? `<div style="font-size:0.72rem;color:#9a7a5a;margin-top:2px">⭐ ${b.rating}/10</div>` : ''}
       </div>
@@ -1021,9 +1065,85 @@ function deleteBottle() {
 }
 
 // ════════════════════════════════════════════
-// WIZARD DE RECHERCHE
+// PHOTOS DES BOUTEILLES
+// ════════════════════════════════════════════
+const BOTTLE_IMAGES = {
+  'Aberlour 12 ans':              'https://img.thewhiskyexchange.com/900/whi_abe_12.jpg',
+  'Aberlour A\'bunadh':           'https://img.thewhiskyexchange.com/900/whi_abe_abx.jpg',
+  'Glenfarclas 10 ans':           'https://img.thewhiskyexchange.com/900/whi_gnf_10y.jpg',
+  'Glenfarclas 105':              'https://img.thewhiskyexchange.com/900/whi_gnf_105.jpg',
+  'Glenfiddich 12 ans':           'https://img.thewhiskyexchange.com/900/whi_gld_12y.jpg',
+  'Glenfiddich 15 ans':           'https://img.thewhiskyexchange.com/900/whi_gld_15y.jpg',
+  'The Glenlivet 12 ans':         'https://img.thewhiskyexchange.com/900/whi_tgl_12y.jpg',
+  'The Glenlivet 18 ans':         'https://img.thewhiskyexchange.com/900/whi_tgl_18y.jpg',
+  'Macallan 12 ans Sherry':       'https://img.thewhiskyexchange.com/900/whi_mac_12ys.jpg',
+  'Macallan 18 ans Sherry':       'https://img.thewhiskyexchange.com/900/whi_mac_18ys.jpg',
+  'Balvenie DoubleWood 12 ans':   'https://img.thewhiskyexchange.com/900/whi_bal_dw12.jpg',
+  'Balvenie Caribbean Cask 14':   'https://img.thewhiskyexchange.com/900/whi_bal_cc14.jpg',
+  'Lagavulin 16 ans':             'https://img.thewhiskyexchange.com/900/whi_lag_16y.jpg',
+  'Laphroaig 10 ans':             'https://img.thewhiskyexchange.com/900/whi_lph_10y.jpg',
+  'Ardbeg 10 ans':                'https://img.thewhiskyexchange.com/900/whi_ard_10y.jpg',
+  'Bowmore 12 ans':               'https://img.thewhiskyexchange.com/900/whi_bow_12y.jpg',
+  'Caol Ila 12 ans':              'https://img.thewhiskyexchange.com/900/whi_cil_12y.jpg',
+  'Oban 14 ans':                  'https://img.thewhiskyexchange.com/900/whi_oba_14y.jpg',
+  'Dalmore 12 ans':               'https://img.thewhiskyexchange.com/900/whi_dal_12y.jpg',
+  'Glenmorangie Original 10 ans': 'https://img.thewhiskyexchange.com/900/whi_glm_ori.jpg',
+  'Glenmorangie Lasanta 12 ans':  'https://img.thewhiskyexchange.com/900/whi_glm_las.jpg',
+  'Highland Park 12 ans':         'https://img.thewhiskyexchange.com/900/whi_hgp_12y.jpg',
+  'Highland Park 18 ans':         'https://img.thewhiskyexchange.com/900/whi_hgp_18y.jpg',
+  'Springbank 10 ans':            'https://img.thewhiskyexchange.com/900/whi_spb_10y.jpg',
+  'Springbank 15 ans':            'https://img.thewhiskyexchange.com/900/whi_spb_15y.jpg',
+  'Auchentoshan Three Wood':      'https://img.thewhiskyexchange.com/900/whi_auc_3wo.jpg',
+  'Nikka From The Barrel':        'https://img.thewhiskyexchange.com/900/whi_nik_ftb.jpg',
+  'Nikka Coffey Grain':           'https://img.thewhiskyexchange.com/900/whi_nik_cfg.jpg',
+  'Hibiki Japanese Harmony':      'https://img.thewhiskyexchange.com/900/whi_hib_jha.jpg',
+  'Yamazaki 12 ans':              'https://img.thewhiskyexchange.com/900/whi_ymz_12y.jpg',
+  'Talisker 10 ans':              'https://img.thewhiskyexchange.com/900/whi_tal_10y.jpg',
+  'Teeling Small Batch':          'https://img.thewhiskyexchange.com/900/whi_tee_sba.jpg',
+  'Teeling Single Grain':         'https://img.thewhiskyexchange.com/900/whi_tee_sgr.jpg',
+  'Redbreast 12 ans':             'https://img.thewhiskyexchange.com/900/whi_red_12y.jpg',
+  'Green Spot':                   'https://img.thewhiskyexchange.com/900/whi_gsp_nag.jpg',
+  'Jameson Black Barrel':         'https://img.thewhiskyexchange.com/900/whi_jam_bba.jpg',
+  'Kavalan Classic':              'https://img.thewhiskyexchange.com/900/whi_kav_cla.jpg',
+  'Kavalan Concertmaster':        'https://img.thewhiskyexchange.com/900/whi_kav_con.jpg',
+  'Johnnie Walker Black Label':   'https://img.thewhiskyexchange.com/900/whi_jwb_bla.jpg',
+  'Johnnie Walker Blue Label':    'https://img.thewhiskyexchange.com/900/whi_jwb_blu.jpg',
+  'Chivas Regal 18 ans':          'https://img.thewhiskyexchange.com/900/whi_chi_18y.jpg',
+  'Glenfarclas 12 ans':           'https://img.thewhiskyexchange.com/900/whi_gnf_12y.jpg',
+  'Bruichladdich The Classic Laddie': 'https://img.thewhiskyexchange.com/900/whi_bru_tcl.jpg',
+  'Compass Box The Peat Monster': 'https://img.thewhiskyexchange.com/900/whi_cpb_tpm.jpg',
+};
+
+const REGION_COLORS = {
+  'Speyside':    '#c8a96e', 'Highlands':  '#7a9e7e', 'Islay':      '#5e7a9e',
+  'Islands':     '#6e8ea0', 'Lowlands':   '#a8c080', 'Campbeltown':'#8e7a6e',
+  'Irlande':     '#5a8a5a', 'Japon':      '#c07070', 'France':     '#8070b0',
+  'Taïwan':      '#d0806a', 'Écosse':     '#b09060', 'USA':        '#b08040',
+};
+
+function bottleImgHtml(b, cls = 'bottle-img-wrap') {
+  const img = BOTTLE_IMAGES[b.name];
+  const color = REGION_COLORS[b.region] || '#b09060';
+  const emoji = b.peat >= 3 ? '🔥' : b.region === 'Japon' ? '🎋' : b.region === 'Irlande' ? '☘️' : '🥃';
+  return `<div class="${cls}" style="background:${color}20;border:2px solid ${color}40">
+    ${emoji}
+    ${img ? `<img src="${img}" alt="${b.name}" onerror="this.style.display='none'">` : ''}
+  </div>`;
+}
+
+// ════════════════════════════════════════════
+// WIZARD DE RECHERCHE SIMPLIFIÉ
 // ════════════════════════════════════════════
 let wizCriteria = {};
+
+const MOOD_PROFILE = {
+  fruity:   { aromes: ['fruité','agrumes','floral'], maxPeat: 1 },
+  sweet:    { aromes: ['miel','caramel','vanille','sucré'], maxPeat: 2 },
+  smoky:    { aromes: ['tourbé','fumé','maritime','iodé'], minPeat: 3 },
+  rich:     { aromes: ['chocolat','épicé','caramel','boisé'], minPeat: 0 },
+  maritime: { aromes: ['maritime','iodé','sel','algues'], regions: ['Islands','Islay','Campbeltown'] },
+  surprise: {},
+};
 
 function startWizard() {
   wizCriteria = {};
@@ -1031,56 +1151,45 @@ function startWizard() {
   document.getElementById('results-section').style.display = 'none';
   document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
   document.getElementById('step-1').classList.add('active');
-  document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-  document.getElementById('wiz-progress').style.width = '25%';
+  document.querySelectorAll('.mood-card, .choice-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('wiz-progress').style.width = '33%';
+}
+
+function moodPick(el) {
+  document.querySelectorAll('.mood-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  wizCriteria.mood = el.dataset.mood;
+  setTimeout(() => wizNext(2), 300);
+}
+
+function smokePick(el) {
+  document.querySelectorAll('#step-2 .choice-btn').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  wizCriteria.smoke = parseInt(el.dataset.smoke);
+  document.getElementById('wiz-progress').style.width = '66%';
+  setTimeout(() => wizNext(3), 300);
+}
+
+function strengthPick(el) {
+  document.querySelectorAll('#step-3 .choice-btn').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  wizCriteria.strength = parseInt(el.dataset.strength);
+  document.getElementById('wiz-progress').style.width = '100%';
+  setTimeout(() => computeResults(), 350);
 }
 
 function wizNext(step) {
-  // Sauvegarder les sélections de l'étape actuelle
-  if (step === 2) {
-    wizCriteria.types = getSelectedTags('tags-type');
-    document.getElementById('wiz-progress').style.width = '50%';
-  } else if (step === 3) {
-    wizCriteria.aromes = getSelectedTags('tags-arome');
-    document.getElementById('wiz-progress').style.width = '75%';
-  } else if (step === 4) {
-    wizCriteria.peat     = parseInt(document.getElementById('r-peat').value);
-    wizCriteria.strength = parseInt(document.getElementById('r-strength').value);
-    wizCriteria.age      = parseInt(document.getElementById('r-age').value);
-    document.getElementById('wiz-progress').style.width = '100%';
-  } else if (step === 1) {
-    document.getElementById('wiz-progress').style.width = '25%';
-  } else if (step === 3 && wizCriteria.aromes) {
-    document.getElementById('wiz-progress').style.width = '75%';
-  }
+  const pcts = { 1:'33%', 2:'66%', 3:'100%' };
+  document.getElementById('wiz-progress').style.width = pcts[step] || '33%';
   document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
   document.getElementById(`step-${step}`).classList.add('active');
   window.scrollTo(0, 0);
-}
-
-function getSelectedTags(containerId) {
-  return Array.from(document.querySelectorAll(`#${containerId} .tag.active`)).map(t => t.dataset.v);
-}
-
-function tagSelectOnly(el, containerId) {
-  document.querySelectorAll(`#${containerId} .tag`).forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-}
-
-const RANGE_LABELS = {
-  peat:     ['Aucune', 'Très légère', 'Légère', 'Modérée', 'Intense', 'Très intense'],
-  strength: ['Doux (40%)', 'Léger (43%)', 'Équilibré (46%)', 'Puissant (50%+)', 'Cask strength'],
-  age:      ['NAS / Jeune', '8-12 ans', '12-18 ans', '18-25 ans', '25 ans+'],
-};
-function updateRangeLabel(key, val) {
-  document.getElementById(`lbl-${key}`).textContent = RANGE_LABELS[key][val] || val;
 }
 
 // ════════════════════════════════════════════
 // ALGORITHME DE RECOMMANDATION
 // ════════════════════════════════════════════
 function computeResults() {
-  wizCriteria.regions = getSelectedTags('tags-region');
   const c = loadCave();
   cave = c;
 
@@ -1105,16 +1214,21 @@ function computeResults() {
     const pct = Math.round(item.score);
     return `
     <div class="card result-card ${i===0?'top':''}" onclick="toggleDetail('detail-${b.id}')">
-      <div class="result-rank">${ranks[i]}</div>
-      <div class="result-name">${b.name}</div>
-      <div class="result-distillery">${[b.distillery, b.region].filter(Boolean).join(' · ')}</div>
-      <div class="result-meta">
-        ${b.region ? `<span class="badge badge-region">📍 ${b.region}</span>` : ''}
-        ${b.type   ? `<span class="badge badge-type">🥃 ${b.type}</span>` : ''}
-        ${b.age    ? `<span class="badge badge-age">⏳ ${b.age} ans</span>` : ''}
-        ${b.abv    ? `<span class="badge badge-abv">💪 ${b.abv}%</span>` : ''}
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        ${bottleImgHtml(b, 'result-img')}
+        <div style="flex:1;min-width:0">
+          <div class="result-rank">${ranks[i]}</div>
+          <div class="result-name">${b.name}</div>
+          <div class="result-distillery">${[b.distillery, b.region].filter(Boolean).join(' · ')}</div>
+          <div class="result-meta">
+            ${b.region ? `<span class="badge badge-region">📍 ${b.region}</span>` : ''}
+            ${b.type   ? `<span class="badge badge-type">🥃 ${b.type}</span>` : ''}
+            ${b.age    ? `<span class="badge badge-age">⏳ ${b.age} ans</span>` : ''}
+            ${b.abv    ? `<span class="badge badge-abv">💪 ${b.abv}%</span>` : ''}
+          </div>
+        </div>
       </div>
-      <div class="result-match">
+      <div class="result-match" style="margin-top:10px">
         <div class="match-bar-bg"><div class="match-bar-fill" style="width:${pct}%"></div></div>
         <div class="match-pct">${pct}%</div>
       </div>
@@ -1138,58 +1252,43 @@ function scoreBottle(b, crit) {
   let score = 0;
   let total = 0;
 
-  // Type (25 pts)
-  if (crit.types?.length && !crit.types.includes('indifférent')) {
-    total += 25;
-    const typeNorm = (b.type || '').toLowerCase();
-    if (crit.types.some(t => typeNorm.includes(t) || t.includes(typeNorm))) score += 25;
-  }
-
-  // Arômes (35 pts)
-  if (crit.aromes?.length) {
-    total += 35;
+  // Ambiance / mood (40 pts)
+  if (crit.mood && crit.mood !== 'surprise') {
+    total += 40;
+    const profile = MOOD_PROFILE[crit.mood] || {};
     const bAromes = (b.aromes || []).map(a => a.toLowerCase());
     const bNotes  = (b.notes  || '').toLowerCase();
-    let matches = 0;
-    for (const a of crit.aromes) {
-      if (bAromes.some(ba => ba.includes(a) || a.includes(ba)) || bNotes.includes(a)) matches++;
+
+    if (profile.aromes?.length) {
+      let matches = 0;
+      for (const a of profile.aromes) {
+        if (bAromes.some(ba => ba.includes(a) || a.includes(ba)) || bNotes.includes(a)) matches++;
+      }
+      score += (matches / profile.aromes.length) * 30;
     }
-    score += (matches / crit.aromes.length) * 35;
+    if (profile.regions?.length && profile.regions.includes(b.region)) score += 10;
+    else if (profile.regions?.length) {} // pas de pénalité
+    else score += 5; // bonus neutre si pas de contrainte région
   }
 
-  // Tourbe (20 pts)
-  if (crit.peat !== undefined) {
-    total += 20;
-    const diff = Math.abs((b.peat || 0) - crit.peat);
-    score += Math.max(0, 20 - diff * 6);
+  // Fumée / tourbe (30 pts)
+  if (crit.smoke !== undefined) {
+    total += 30;
+    const targetPeat = crit.smoke; // 0, 2 ou 4
+    const diff = Math.abs((b.peat || 0) - targetPeat);
+    score += Math.max(0, 30 - diff * 8);
   }
 
-  // Force / ABV (10 pts)
+  // Force (30 pts)
   if (crit.strength !== undefined) {
-    total += 10;
-    const abvThresholds = [40, 43, 46, 50, 58];
-    const targetAbv = abvThresholds[crit.strength] || 46;
+    total += 30;
+    const abvTargets = { 0: 41, 2: 46, 4: 54 };
+    const targetAbv = abvTargets[crit.strength] || 46;
     const diff = Math.abs((b.abv || 43) - targetAbv);
-    score += Math.max(0, 10 - diff * 0.5);
+    score += Math.max(0, 30 - diff * 1.2);
   }
 
-  // Âge (10 pts)
-  if (crit.age !== undefined && crit.age > 0) {
-    total += 10;
-    const ageRanges = [[0,8],[8,12],[12,18],[18,25],[25,60]];
-    const [lo, hi] = ageRanges[crit.age] || [0,60];
-    const bAge = b.age || 0;
-    if (bAge >= lo && bAge < hi) score += 10;
-    else { const dist = Math.min(Math.abs(bAge-lo), Math.abs(bAge-hi)); score += Math.max(0, 10 - dist); }
-  }
-
-  // Région (bonus 10 pts)
-  if (crit.regions?.length && !crit.regions.includes('indifférent')) {
-    total += 10;
-    if (crit.regions.includes(b.region)) score += 10;
-  }
-
-  if (total === 0) return 60 + (b.rating || 5) * 3;
+  if (total === 0) return 60 + (b.rating || 5) * 4;
   const base = (score / total) * 85;
   const bonus = (b.rating || 5) / 10 * 15;
   return Math.min(99, Math.round(base + bonus));
@@ -1210,10 +1309,6 @@ function toast(msg) {
 // ════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════
-// Initialiser les labels des ranges
-updateRangeLabel('peat', 0);
-updateRangeLabel('strength', 2);
-updateRangeLabel('age', 0);
 renderHome();
 </script>
 </body>
