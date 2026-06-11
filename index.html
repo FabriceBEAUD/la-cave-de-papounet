@@ -845,42 +845,11 @@ header {
         <button class="btn-secondary" onclick="wizNext(2)" style="margin-top:4px">← Retour</button>
       </div>
 
-      <!-- Étape 4 : Région -->
+      <!-- Étape 4 : Région (générée dynamiquement) -->
       <div class="wizard-step" id="step-4">
         <div class="wiz-question">Une région préférée ?</div>
-        <div class="wiz-hint">Optionnel — tape "Peu importe" pour tout voir.</div>
-        <div class="region-grid">
-          <div class="region-card" data-region="Highlands" onclick="regionPick(this)">
-            <span class="r-flag">🏔️</span><span class="r-name">Highlands</span>
-          </div>
-          <div class="region-card" data-region="Speyside" onclick="regionPick(this)">
-            <span class="r-flag">🌊</span><span class="r-name">Speyside</span>
-          </div>
-          <div class="region-card" data-region="Islay" onclick="regionPick(this)">
-            <span class="r-flag">🌫️</span><span class="r-name">Islay</span>
-          </div>
-          <div class="region-card" data-region="Islands" onclick="regionPick(this)">
-            <span class="r-flag">🏝️</span><span class="r-name">Islands</span>
-          </div>
-          <div class="region-card" data-region="Japon" onclick="regionPick(this)">
-            <span class="r-flag">🇯🇵</span><span class="r-name">Japon</span>
-          </div>
-          <div class="region-card" data-region="Irlande" onclick="regionPick(this)">
-            <span class="r-flag">🇮🇪</span><span class="r-name">Irlande</span>
-          </div>
-          <div class="region-card" data-region="USA" onclick="regionPick(this)">
-            <span class="r-flag">🇺🇸</span><span class="r-name">USA</span>
-          </div>
-          <div class="region-card" data-region="France" onclick="regionPick(this)">
-            <span class="r-flag">🇫🇷</span><span class="r-name">France</span>
-          </div>
-          <div class="region-card" data-region="Taïwan" onclick="regionPick(this)">
-            <span class="r-flag">🇹🇼</span><span class="r-name">Taïwan</span>
-          </div>
-          <div class="region-card" data-region="" onclick="regionPick(this)">
-            <span class="r-flag">🎲</span><span class="r-name">Peu importe</span>
-          </div>
-        </div>
+        <div class="wiz-hint">Uniquement les régions présentes dans ta cave.</div>
+        <div class="region-grid" id="region-grid"></div>
         <button class="btn-secondary" onclick="wizNext(3)" style="margin-top:4px">← Retour</button>
       </div>
     </div>
@@ -1493,6 +1462,25 @@ function strengthPick(el) {
   setTimeout(() => wizNext(4), 300);
 }
 
+const REGION_FLAGS = {
+  'Highlands':'🏔️','Speyside':'🌊','Islay':'🌫️','Islands':'🏝️',
+  'Campbeltown':'⚓','Lowlands':'🌾','Japon':'🇯🇵','Irlande':'🇮🇪',
+  'France':'🇫🇷','Taïwan':'🇹🇼','USA':'🇺🇸','Écosse':'🥃',
+};
+
+function buildRegionGrid() {
+  const regions = [...new Set(loadCave().map(b => b.region).filter(Boolean))].sort();
+  const grid = document.getElementById('region-grid');
+  grid.innerHTML = regions.map(r => `
+    <div class="region-card" data-region="${r}" onclick="regionPick(this)">
+      <span class="r-flag">${REGION_FLAGS[r] || '🗺️'}</span>
+      <span class="r-name">${r}</span>
+    </div>`).join('') + `
+    <div class="region-card" data-region="" onclick="regionPick(this)">
+      <span class="r-flag">🎲</span><span class="r-name">Peu importe</span>
+    </div>`;
+}
+
 function regionPick(el) {
   document.querySelectorAll('.region-card').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
@@ -1504,6 +1492,7 @@ function wizNext(step) {
   const pcts = { 1:'25%', 2:'50%', 3:'75%', 4:'100%' };
   document.getElementById('wiz-progress').style.width = pcts[step] || '25%';
   document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+  if (step === 4) buildRegionGrid();
   document.getElementById(`step-${step}`).classList.add('active');
   window.scrollTo(0, 0);
 }
