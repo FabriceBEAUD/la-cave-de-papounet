@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Cave de Papounet 🥃</title>
+<style>
+:root {
+  --or:     #b8860b;
+  --or-vif: #d4a017;
+  --brun:   #3d1c02;
+  --brun2:  #6b3a1f;
+  --creme:  #fdf6e3;
+  --gris:   #f5f0e8;
+  --ombre:  0 8px 32px rgba(61,28,2,0.18);
+  --radius: 18px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: linear-gradient(160deg, #1a0a00 0%, #3d1c02 50%, #6b3a1f 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 16px 40px;
+}
+
+/* ── HEADER ── */
+header {
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px 18px;
+}
+.header-title { color: var(--or-vif); font-size: 1rem; font-weight: 700; letter-spacing: 0.5px; }
+.header-sub   { color: rgba(255,255,255,0.5); font-size: 0.75rem; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--creme);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: var(--ombre);
+  margin-bottom: 16px;
+}
+
+/* ── ÉCRAN ACCUEIL ── */
+.home-hero { text-align: center; margin-bottom: 28px; }
+.home-hero .glass { font-size: 4.5rem; line-height: 1; }
+.home-hero h1 { font-size: 1.6rem; color: var(--brun); font-weight: 900; margin: 8px 0 4px; }
+.home-hero p  { color: var(--brun2); font-size: 0.9rem; }
+
+.home-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.stat-box {
+  background: var(--gris);
+  border-radius: 12px;
+  padding: 14px 8px;
+  text-align: center;
+}
+.stat-box .stat-val { font-size: 1.5rem; font-weight: 900; color: var(--brun); }
+.stat-box .stat-lbl { font-size: 0.72rem; color: var(--brun2); margin-top: 2px; }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--or), var(--brun2));
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 15px rgba(184,134,11,0.4);
+  letter-spacing: 0.3px;
+}
+.btn-primary:hover { transform: translateY(-2px); }
+.btn-secondary {
+  background: white;
+  color: var(--brun);
+  border: 2px solid #e8d5b0;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 10px;
+  transition: border-color 0.15s;
+}
+.btn-secondary:hover { border-color: var(--or); }
+
+/* ── RECHERCHE / WIZARD ── */
+.wizard-step { display: none; }
+.wizard-step.active { display: block; }
+.wizard-title {
+  font-size: 1.15rem; font-weight: 900; color: var(--brun);
+  margin-bottom: 6px;
+}
+.wizard-sub { font-size: 0.85rem; color: var(--brun2); margin-bottom: 20px; }
+
+.progress-bar {
+  background: #e8d5b0;
+  border-radius: 99px;
+  height: 6px;
+  margin-bottom: 22px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--or), var(--or-vif));
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.tag-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.tag {
+  padding: 8px 14px;
+  border-radius: 99px;
+  border: 2px solid #e8d5b0;
+  background: white;
+  font-size: 0.85rem;
+  color: var(--brun2);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.tag:hover  { border-color: var(--or); }
+.tag.active { background: var(--or); border-color: var(--or); color: white; font-weight: 700; }
+
+.range-row {
+  margin-bottom: 18px;
+}
+.range-row label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--brun);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.range-row input[type=range] {
+  width: 100%;
+  accent-color: var(--or);
+  height: 6px;
+}
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #9a7a5a;
+  margin-top: 4px;
+}
+
+/* ── RÉSULTATS ── */
+.result-card {
+  background: white;
+  border-radius: 14px;
+  border: 2px solid #e8d5b0;
+  padding: 18px;
+  margin-bottom: 12px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s;
+  cursor: pointer;
+}
+.result-card:hover { border-color: var(--or); transform: translateY(-2px); }
+.result-card.top { border-color: var(--or); box-shadow: 0 4px 16px rgba(184,134,11,0.2); }
+.result-rank {
+  position: absolute;
+  top: 12px; right: 14px;
+  font-size: 1.4rem;
+}
+.result-name  { font-size: 1.05rem; font-weight: 900; color: var(--brun); margin-bottom: 2px; padding-right: 32px; }
+.result-distillery { font-size: 0.78rem; color: #9a7a5a; margin-bottom: 10px; }
+.result-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.badge {
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.badge-region { background: #fef3c7; color: #92400e; }
+.badge-type   { background: #dbeafe; color: #1e40af; }
+.badge-age    { background: #d1fae5; color: #065f46; }
+.badge-abv    { background: #fee2e2; color: #991b1b; }
+.result-match {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.match-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: #e8d5b0;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.match-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--or), var(--or-vif));
+}
+.match-pct { font-size: 0.82rem; font-weight: 900; color: var(--or); min-width: 36px; text-align: right; }
+
+.result-notes { font-size: 0.82rem; color: var(--brun2); line-height: 1.5; margin-top: 8px; font-style: italic; }
+
+.result-detail { display: none; padding-top: 12px; border-top: 1px solid #e8d5b0; margin-top: 12px; }
+.result-detail.open { display: block; }
+.detail-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 4px 0; border-bottom: 1px solid #f5f0e8; }
+.detail-row span:first-child { color: #9a7a5a; }
+.detail-row span:last-child  { font-weight: 700; color: var(--brun); }
+
+/* ── CAVE (liste) ── */
+.cave-filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+.cave-filters::-webkit-scrollbar { display: none; }
+.filter-btn {
+  padding: 6px 14px;
+  border-radius: 99px;
+  border: 2px solid #e8d5b0;
+  background: white;
+  font-size: 0.8rem;
+  color: var(--brun2);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.filter-btn.active { background: var(--brun); border-color: var(--brun); color: white; }
+
+.cave-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e8d5b0;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.cave-item:last-child { border-bottom: none; }
+.cave-item:hover { opacity: 0.75; }
+.bottle-icon { font-size: 2rem; width: 42px; text-align: center; }
+.cave-item-info { flex: 1; min-width: 0; }
+.cave-item-name { font-size: 0.95rem; font-weight: 800; color: var(--brun); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cave-item-sub  { font-size: 0.75rem; color: #9a7a5a; margin-top: 2px; }
+.cave-item-abv  { font-size: 0.82rem; font-weight: 700; color: var(--or); white-space: nowrap; }
+
+/* ── FORMULAIRE AJOUT ── */
+.field { margin-bottom: 14px; }
+.field label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--brun);
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  border: 2px solid #e8d5b0;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 0.95rem;
+  outline: none;
+  background: white;
+  color: var(--brun);
+  transition: border-color 0.2s;
+  font-family: inherit;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--or); }
+.field textarea { resize: vertical; min-height: 70px; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-error {
+  background: #fef2f2; color: #dc2626;
+  border-radius: 8px; padding: 8px 12px;
+  font-size: 0.82rem; margin-bottom: 12px; display: none;
+  border-left: 3px solid #dc2626;
+}
+
+/* ── MODALE DÉTAIL ── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(61,28,2,0.7);
+  z-index: 100;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--creme);
+  border-radius: 24px 24px 0 0;
+  padding: 28px 24px 40px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-handle { width: 40px; height: 4px; background: #e8d5b0; border-radius: 99px; margin: 0 auto 20px; }
+.modal-title { font-size: 1.3rem; font-weight: 900; color: var(--brun); margin-bottom: 4px; }
+.modal-sub   { font-size: 0.82rem; color: #9a7a5a; margin-bottom: 16px; }
+.modal-section { margin-bottom: 16px; }
+.modal-section h4 { font-size: 0.78rem; font-weight: 700; color: #9a7a5a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.flavor-wheel {
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.flavor-tag {
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  background: #fef3c7;
+  color: #92400e;
+}
+.btn-danger {
+  background: white; color: #dc2626;
+  border: 2px solid #fee2e2;
+  border-radius: 12px;
+  padding: 12px; font-size: 0.9rem;
+  font-weight: 700; cursor: pointer;
+  width: 100%; margin-top: 8px;
+  transition: background 0.15s;
+}
+.btn-danger:hover { background: #fef2f2; }
+
+/* ── NAVIGATION ── */
+.nav-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: white;
+  border-top: 1px solid #e8d5b0;
+  display: flex;
+  z-index: 50;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 4px 8px;
+  cursor: pointer;
+  transition: color 0.15s;
+  color: #c4a882;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+.nav-item.active { color: var(--brun); }
+.nav-item .nav-icon { font-size: 1.4rem; line-height: 1; }
+.nav-item .nav-lbl  { font-size: 0.65rem; font-weight: 700; margin-top: 3px; letter-spacing: 0.3px; text-transform: uppercase; }
+
+.screens-wrap { width: 100%; max-width: 520px; padding-bottom: 80px; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align: center; padding: 40px 20px; }
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+.empty-state h3 { color: var(--brun); font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+.empty-state p  { color: #9a7a5a; font-size: 0.85rem; }
+
+/* ── TOASTER ── */
+.toast {
+  position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px);
+  background: var(--brun); color: white;
+  border-radius: 99px; padding: 12px 24px;
+  font-size: 0.88rem; font-weight: 700;
+  z-index: 200; transition: transform 0.3s ease;
+  white-space: nowrap; box-shadow: var(--ombre);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="header-title">🥃 La Cave de Papounet</div>
+    <div class="header-sub" id="header-count">Chargement…</div>
+  </div>
+</header>
+
+<div class="screens-wrap">
+
+  <!-- ════ ACCUEIL ════ -->
+  <div id="screen-home" class="screen active">
+    <div class="card">
+      <div class="home-hero">
+        <div class="glass">🥃</div>
+        <h1>La Cave de Papounet</h1>
+        <p>Quelle bouteille pour ce soir ?</p>
+      </div>
+      <div class="home-stats">
+        <div class="stat-box">
+          <div class="stat-val" id="stat-total">0</div>
+          <div class="stat-lbl">Bouteilles</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-regions">0</div>
+          <div class="stat-lbl">Régions</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-avg-abv">0°</div>
+          <div class="stat-lbl">ABV moyen</div>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="startWizard()">🔍 Trouver le whisky parfait</button>
+      <button class="btn-secondary" onclick="showScreen('screen-cave')">📦 Voir ma cave</button>
+    </div>
+
+    <!-- Top 3 récents -->
+    <div class="card" id="recent-card" style="display:none">
+      <div style="font-size:0.78rem;font-weight:700;color:#9a7a5a;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Récemment ajoutés</div>
+      <div id="recent-list"></div>
+    </div>
+  </div>
+
+  <!-- ════ RECHERCHE / WIZARD ════ -->
+  <div id="screen-search" class="screen">
+    <div class="card">
+      <div class="progress-bar"><div class="progress-fill" id="wiz-progress" style="width:25%"></div></div>
+
+      <!-- Étape 1 : Type -->
+      <div class="wizard-step active" id="step-1">
+        <div class="wizard-title">Quel type de whisky ?</div>
+        <div class="wizard-sub">Choisis un ou plusieurs styles.</div>
+        <div class="tag-grid" id="tags-type">
+          <div class="tag" data-v="single malt">Single Malt</div>
+          <div class="tag" data-v="blended">Blended</div>
+          <div class="tag" data-v="single grain">Single Grain</div>
+          <div class="tag" data-v="bourbon">Bourbon</div>
+          <div class="tag" data-v="rye">Rye</div>
+          <div class="tag" data-v="japanese">Japonais</div>
+          <div class="tag" data-v="irish">Irlandais</div>
+          <div class="tag" data-v="indifférent" onclick="tagSelectOnly(this,'tags-type')">Peu importe 🤷</div>
+        </div>
+        <button class="btn-primary" style="margin-top:16px" onclick="wizNext(2)">Suivant →</button>
+      </div>
+
+      <!-- Étape 2 : Arômes -->
+      <div class="wizard-step" id="step-2">
+        <div class="wizard-title">Quels arômes recherches-tu ?</div>
+        <div class="wizard-sub">Plusieurs choix possibles.</div>
+        <div class="tag-grid" id="tags-arome">
+          <div class="tag" data-v="tourbé">🌿 Tourbé / Fumé</div>
+          <div class="tag" data-v="fruité">🍎 Fruité</div>
+          <div class="tag" data-v="floral">🌸 Floral</div>
+          <div class="tag" data-v="miel">🍯 Miel / Vanille</div>
+          <div class="tag" data-v="épicé">🌶️ Épicé</div>
+          <div class="tag" data-v="chocolat">🍫 Chocolat / Café</div>
+          <div class="tag" data-v="maritime">🌊 Maritime / Iodé</div>
+          <div class="tag" data-v="caramel">🍮 Caramel / Boisé</div>
+          <div class="tag" data-v="agrumes">🍋 Agrumes</div>
+          <div class="tag" data-v="sec">Sec / Minéral</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn-secondary" style="margin:0" onclick="wizNext(1)">← Retour</button>
+          <button class="btn-primary"   style="margin:0" onclick="wizNext(3)">Suivant →</button>
+        </div>
+      </div>
+
+      <!-- Étape 3 : Intensité & force -->
+      <div class="wizard-step" id="step-3">
+        <div class="wizard-title">Quelle intensité ?</div>
+        <div class="wizard-sub">Règle selon tes préférences.</div>
+        <div class="range-row">
+          <label>Tourbe <span id="lbl-peat">—</span></label>
+          <input type="range" id="r-peat" min="0" max="5" value="0" oninput="updateRangeLabel('peat',this.value)">
+          <div class="range-labels"><span>Aucune</span><span>Légère</span><span>Intense</span></div>
+        </div>
+        <div class="range-row">
+          <label>Force <span id="lbl-strength">—</span></label>
+          <input type="range" id="r-strength" min="0" max="4" value="2" oninput="updateRangeLabel('strength',this.value)">
+          <div class="range-labels"><span>Doux</span><span>Équilibré</span><span>Puissant</span></div>
+        </div>
+        <div class="range-row">
+          <label>Âge préféré <span id="lbl-age">—</span></label>
+          <input type="range" id="r-age" min="0" max="4" value="0" oninput="updateRangeLabel('age',this.value)">
+          <div class="range-labels"><span>NAS</span><span>10-15 ans</span><span>25 ans+</span></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn-secondary" style="margin:0" onclick="wizNext(2)">← Retour</button>
+          <button class="btn-primary"   style="margin:0" onclick="wizNext(4)">Suivant →</button>
+        </div>
+      </div>
+
+      <!-- Étape 4 : Région -->
+      <div class="wizard-step" id="step-4">
+        <div class="wizard-title">Une région préférée ?</div>
+        <div class="wizard-sub">Optionnel — laisse vide pour explorer.</div>
+        <div class="tag-grid" id="tags-region">
+          <div class="tag" data-v="Highlands">🏔️ Highlands</div>
+          <div class="tag" data-v="Lowlands">🌾 Lowlands</div>
+          <div class="tag" data-v="Speyside">🌊 Speyside</div>
+          <div class="tag" data-v="Islay">🌫️ Islay</div>
+          <div class="tag" data-v="Campbeltown">⚓ Campbeltown</div>
+          <div class="tag" data-v="Islands">🏝️ Islands</div>
+          <div class="tag" data-v="Japon">🇯🇵 Japon</div>
+          <div class="tag" data-v="USA">🇺🇸 USA</div>
+          <div class="tag" data-v="Irlande">🇮🇪 Irlande</div>
+          <div class="tag" data-v="indifférent" onclick="tagSelectOnly(this,'tags-region')">🗺️ Surprends-moi</div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn-secondary" style="margin:0" onclick="wizNext(3)">← Retour</button>
+          <button class="btn-primary"   style="margin:0" onclick="computeResults()">🔍 Trouver mes bouteilles</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Résultats -->
+    <div id="results-section" style="display:none">
+      <div class="card" style="padding:16px 20px 8px">
+        <div style="font-size:1rem;font-weight:900;color:var(--brun);margin-bottom:4px">🏆 Mes recommandations</div>
+        <div style="font-size:0.82rem;color:#9a7a5a" id="results-subtitle"></div>
+      </div>
+      <div id="results-list"></div>
+      <div style="max-width:520px;width:100%">
+        <button class="btn-secondary" onclick="startWizard()" style="margin-bottom:10px">🔄 Nouvelle recherche</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ MA CAVE ════ -->
+  <div id="screen-cave" class="screen">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div style="font-size:1.1rem;font-weight:900;color:var(--brun)">📦 Ma Cave</div>
+        <button class="btn-primary" style="width:auto;padding:10px 18px;margin:0;font-size:0.85rem" onclick="showScreen('screen-add')">+ Ajouter</button>
+      </div>
+      <div class="cave-filters" id="cave-filters">
+        <button class="filter-btn active" data-f="tous" onclick="filterCave(this)">Tous</button>
+        <button class="filter-btn" data-f="Highlands" onclick="filterCave(this)">Highlands</button>
+        <button class="filter-btn" data-f="Islay" onclick="filterCave(this)">Islay</button>
+        <button class="filter-btn" data-f="Speyside" onclick="filterCave(this)">Speyside</button>
+        <button class="filter-btn" data-f="Japon" onclick="filterCave(this)">Japon</button>
+        <button class="filter-btn" data-f="USA" onclick="filterCave(this)">USA</button>
+        <button class="filter-btn" data-f="Irlande" onclick="filterCave(this)">Irlande</button>
+      </div>
+      <div id="cave-list"></div>
+    </div>
+  </div>
+
+  <!-- ════ AJOUTER BOUTEILLE ════ -->
+  <div id="screen-add" class="screen">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+        <button onclick="showScreen('screen-cave')" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--brun)">←</button>
+        <div style="font-size:1.1rem;font-weight:900;color:var(--brun)" id="add-title">➕ Ajouter une bouteille</div>
+      </div>
+      <div class="form-error" id="form-error"></div>
+      <input type="hidden" id="edit-id">
+      <div class="field">
+        <label>Nom du whisky *</label>
+        <input type="text" id="f-name" placeholder="Ex : Lagavulin 16 ans">
+      </div>
+      <div class="field">
+        <label>Distillerie</label>
+        <input type="text" id="f-distillery" placeholder="Ex : Lagavulin Distillery">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Région *</label>
+          <select id="f-region">
+            <option value="">-- Choisir --</option>
+            <option>Highlands</option>
+            <option>Lowlands</option>
+            <option>Speyside</option>
+            <option>Islay</option>
+            <option>Campbeltown</option>
+            <option>Islands</option>
+            <option>Japon</option>
+            <option>USA</option>
+            <option>Irlande</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Type *</label>
+          <select id="f-type">
+            <option value="">-- Choisir --</option>
+            <option>Single Malt</option>
+            <option>Blended</option>
+            <option>Single Grain</option>
+            <option>Bourbon</option>
+            <option>Rye</option>
+            <option>Japonais</option>
+            <option>Irlandais</option>
+            <option>Autre</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Âge (ans)</label>
+          <input type="number" id="f-age" placeholder="Ex : 16" min="0" max="60">
+        </div>
+        <div class="field">
+          <label>ABV (%)</label>
+          <input type="number" id="f-abv" placeholder="Ex : 43" min="30" max="70" step="0.1">
+        </div>
+      </div>
+      <div class="field">
+        <label>Arômes / Notes de dégustation</label>
+        <textarea id="f-notes" placeholder="Ex : tourbe, fumée, iode, fruits secs, vanille..."></textarea>
+      </div>
+      <div class="field">
+        <label>Arômes (tags séparés par virgule)</label>
+        <input type="text" id="f-aromes" placeholder="tourbé, maritime, fruité, épicé">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Prix payé (€)</label>
+          <input type="number" id="f-price" placeholder="Ex : 65" min="0">
+        </div>
+        <div class="field">
+          <label>Note /10</label>
+          <input type="number" id="f-rating" placeholder="Ex : 9" min="0" max="10" step="0.5">
+        </div>
+      </div>
+      <div class="field">
+        <label>Intensité tourbe (0 = aucune, 5 = max)</label>
+        <input type="range" id="f-peat" min="0" max="5" value="0" style="width:100%;accent-color:var(--or)">
+        <div class="range-labels" style="display:flex;justify-content:space-between;font-size:0.72rem;color:#9a7a5a;margin-top:4px">
+          <span>Aucune</span><span>Légère</span><span>Intense</span>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="saveBottle()">💾 Enregistrer</button>
+      <button class="btn-danger"  id="btn-delete" style="display:none" onclick="deleteBottle()">🗑️ Supprimer cette bouteille</button>
+    </div>
+  </div>
+
+</div><!-- /screens-wrap -->
+
+<!-- Modale détail bouteille -->
+<div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-name"></div>
+    <div class="modal-sub"   id="modal-sub"></div>
+    <div class="modal-section">
+      <h4>Infos</h4>
+      <div id="modal-badges" class="result-meta"></div>
+    </div>
+    <div class="modal-section" id="modal-notes-section" style="display:none">
+      <h4>Notes de dégustation</h4>
+      <p style="font-size:0.85rem;color:var(--brun2);line-height:1.6;font-style:italic" id="modal-notes"></p>
+    </div>
+    <div class="modal-section" id="modal-aromes-section" style="display:none">
+      <h4>Arômes</h4>
+      <div class="flavor-wheel" id="modal-aromes"></div>
+    </div>
+    <div class="modal-section" id="modal-extra-section">
+      <h4>Détails</h4>
+      <div id="modal-extra"></div>
+    </div>
+    <button class="btn-secondary" style="margin-bottom:8px" onclick="editFromModal()">✏️ Modifier</button>
+    <button class="btn-danger" onclick="deleteFromModal()">🗑️ Supprimer</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Nav bar -->
+<nav class="nav-bar">
+  <button class="nav-item active" id="nav-home" onclick="showScreen('screen-home')">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-lbl">Accueil</span>
+  </button>
+  <button class="nav-item" id="nav-search" onclick="startWizard()">
+    <span class="nav-icon">🔍</span>
+    <span class="nav-lbl">Chercher</span>
+  </button>
+  <button class="nav-item" id="nav-cave" onclick="showScreen('screen-cave')">
+    <span class="nav-icon">📦</span>
+    <span class="nav-lbl">Ma Cave</span>
+  </button>
+  <button class="nav-item" id="nav-add" onclick="showScreen('screen-add')">
+    <span class="nav-icon">➕</span>
+    <span class="nav-lbl">Ajouter</span>
+  </button>
+</nav>
+
+<script>
+// ════════════════════════════════════════════
+// DONNÉES — Ma Cave (localStorage)
+// ════════════════════════════════════════════
+const STORAGE_KEY = 'cave_papounet_v1';
+
+function loadCave() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+function saveCave(cave) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cave));
+}
+
+let cave = loadCave();
+
+// Quelques bouteilles d'exemple si la cave est vide
+if (cave.length === 0) {
+  cave = [
+    { id: uid(), name: "Lagavulin 16 ans", distillery: "Lagavulin", region: "Islay", type: "Single Malt", age: 16, abv: 43, peat: 5, notes: "Tourbe intense, fumée, iode, fruits secs, vanille sucrée en finale. Un classique d'Islay.", aromes: ["tourbé","maritime","iodé","miel","fruité"], price: 75, rating: 9.5 },
+    { id: uid(), name: "Glenfarclas 15 ans", distillery: "Glenfarclas", region: "Speyside", type: "Single Malt", age: 15, abv: 46, peat: 1, notes: "Sherry généreux, raisin sec, noix de cajou, épices douces, cuir.", aromes: ["fruité","caramel","épicé","chocolat","sec"], price: 55, rating: 8.5 },
+    { id: uid(), name: "Nikka From The Barrel", distillery: "Nikka", region: "Japon", type: "Japonais", age: 0, abv: 51.4, peat: 2, notes: "Complexe et puissant. Vanille, caramel, légère tourbe, fruits confits, épices.", aromes: ["miel","épicé","caramel","fruité","tourbé"], price: 45, rating: 9 },
+    { id: uid(), name: "Highland Park 12 ans", distillery: "Highland Park", region: "Islands", type: "Single Malt", age: 12, abv: 40, peat: 3, notes: "Bruyère, miel, fumée légère, orange confite. Équilibre remarquable.", aromes: ["floral","miel","tourbé","fruité","agrumes"], price: 42, rating: 8 },
+    { id: uid(), name: "Maker's Mark", distillery: "Maker's Mark", region: "USA", type: "Bourbon", age: 0, abv: 45, peat: 0, notes: "Doux et rond. Caramel, vanille, blé, fruits rouges. Idéal pour débuter.", aromes: ["miel","caramel","fruité","floral"], price: 35, rating: 7.5 },
+  ];
+  saveCave(cave);
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+// ════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════
+const NAV_MAP = {
+  'screen-home': 'nav-home',
+  'screen-search': 'nav-search',
+  'screen-cave': 'nav-cave',
+  'screen-add': 'nav-add',
+};
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navId = NAV_MAP[id];
+  if (navId) document.getElementById(navId).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'screen-home') renderHome();
+  if (id === 'screen-cave') renderCave();
+  if (id === 'screen-add') resetAddForm();
+}
+
+// ════════════════════════════════════════════
+// ACCUEIL
+// ════════════════════════════════════════════
+function renderHome() {
+  const c = loadCave();
+  cave = c;
+  document.getElementById('stat-total').textContent = c.length;
+  const regions = new Set(c.map(b => b.region).filter(Boolean));
+  document.getElementById('stat-regions').textContent = regions.size;
+  const avgAbv = c.length ? (c.reduce((s,b) => s + (b.abv||0), 0) / c.length).toFixed(1) : 0;
+  document.getElementById('stat-avg-abv').textContent = avgAbv + '°';
+  document.getElementById('header-count').textContent = `${c.length} bouteille${c.length !== 1 ? 's' : ''}`;
+
+  // Récents
+  const rec = [...c].reverse().slice(0, 3);
+  if (rec.length) {
+    document.getElementById('recent-card').style.display = 'block';
+    document.getElementById('recent-list').innerHTML = rec.map(b => `
+      <div class="cave-item" onclick="openModal('${b.id}')">
+        <div class="bottle-icon">🥃</div>
+        <div class="cave-item-info">
+          <div class="cave-item-name">${b.name}</div>
+          <div class="cave-item-sub">${b.region || ''}${b.age ? ' · ' + b.age + ' ans' : ''}</div>
+        </div>
+        <div class="cave-item-abv">${b.abv ? b.abv + '%' : ''}</div>
+      </div>`).join('');
+  }
+}
+
+// ════════════════════════════════════════════
+// MA CAVE
+// ════════════════════════════════════════════
+let caveFilter = 'tous';
+function renderCave(filter) {
+  if (filter) caveFilter = filter;
+  const c = loadCave();
+  cave = c;
+  const filtered = caveFilter === 'tous' ? c : c.filter(b => b.region === caveFilter);
+  const el = document.getElementById('cave-list');
+  if (!filtered.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><h3>Cave vide ici</h3><p>Ajoute ta première bouteille !</p></div>`;
+    return;
+  }
+  el.innerHTML = filtered.map(b => `
+    <div class="cave-item" onclick="openModal('${b.id}')">
+      <div class="bottle-icon">🥃</div>
+      <div class="cave-item-info">
+        <div class="cave-item-name">${b.name}</div>
+        <div class="cave-item-sub">${[b.region, b.type, b.age ? b.age+' ans' : null].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="cave-item-abv">${b.abv ? b.abv+'%' : ''}</div>
+        ${b.rating ? `<div style="font-size:0.72rem;color:#9a7a5a;margin-top:2px">⭐ ${b.rating}/10</div>` : ''}
+      </div>
+    </div>`).join('');
+}
+
+function filterCave(btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCave(btn.dataset.f);
+}
+
+// ════════════════════════════════════════════
+// MODALE DÉTAIL
+// ════════════════════════════════════════════
+let modalBottleId = null;
+function openModal(id) {
+  const b = cave.find(x => x.id === id);
+  if (!b) return;
+  modalBottleId = id;
+  document.getElementById('modal-name').textContent = b.name;
+  document.getElementById('modal-sub').textContent = [b.distillery, b.region, b.type].filter(Boolean).join(' · ');
+  document.getElementById('modal-badges').innerHTML = [
+    b.region ? `<span class="badge badge-region">📍 ${b.region}</span>` : '',
+    b.type   ? `<span class="badge badge-type">🥃 ${b.type}</span>` : '',
+    b.age    ? `<span class="badge badge-age">⏳ ${b.age} ans</span>` : '<span class="badge badge-age">⏳ NAS</span>',
+    b.abv    ? `<span class="badge badge-abv">💪 ${b.abv}%</span>` : '',
+  ].join('');
+
+  const notesSection = document.getElementById('modal-notes-section');
+  if (b.notes) { notesSection.style.display = 'block'; document.getElementById('modal-notes').textContent = b.notes; }
+  else notesSection.style.display = 'none';
+
+  const aromesSection = document.getElementById('modal-aromes-section');
+  if (b.aromes && b.aromes.length) {
+    aromesSection.style.display = 'block';
+    document.getElementById('modal-aromes').innerHTML = b.aromes.map(a => `<span class="flavor-tag">${a}</span>`).join('');
+  } else aromesSection.style.display = 'none';
+
+  const extra = [];
+  if (b.price)  extra.push(`<div class="detail-row"><span>Prix payé</span><span>${b.price} €</span></div>`);
+  if (b.rating) extra.push(`<div class="detail-row"><span>Note</span><span>⭐ ${b.rating}/10</span></div>`);
+  if (b.peat !== undefined) extra.push(`<div class="detail-row"><span>Tourbe</span><span>${'🟤'.repeat(b.peat) || 'Aucune'}</span></div>`);
+  document.getElementById('modal-extra').innerHTML = extra.join('');
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal(e) {
+  if (e.target.id === 'modal-overlay') document.getElementById('modal-overlay').classList.remove('open');
+}
+
+function editFromModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  openEditForm(modalBottleId);
+}
+
+function deleteFromModal() {
+  if (!confirm('Supprimer cette bouteille ?')) return;
+  cave = cave.filter(b => b.id !== modalBottleId);
+  saveCave(cave);
+  document.getElementById('modal-overlay').classList.remove('open');
+  renderCave();
+  toast('🗑️ Bouteille supprimée');
+}
+
+// ════════════════════════════════════════════
+// FORMULAIRE AJOUT / ÉDITION
+// ════════════════════════════════════════════
+function resetAddForm() {
+  document.getElementById('add-title').textContent = '➕ Ajouter une bouteille';
+  document.getElementById('edit-id').value = '';
+  document.getElementById('btn-delete').style.display = 'none';
+  ['f-name','f-distillery','f-notes','f-aromes'].forEach(id => document.getElementById(id).value = '');
+  ['f-region','f-type'].forEach(id => document.getElementById(id).value = '');
+  ['f-age','f-abv','f-price','f-rating'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-peat').value = 0;
+  document.getElementById('form-error').style.display = 'none';
+}
+
+function openEditForm(id) {
+  const b = cave.find(x => x.id === id);
+  if (!b) return;
+  resetAddForm();
+  document.getElementById('add-title').textContent = '✏️ Modifier la bouteille';
+  document.getElementById('edit-id').value = id;
+  document.getElementById('btn-delete').style.display = 'block';
+  document.getElementById('f-name').value        = b.name || '';
+  document.getElementById('f-distillery').value  = b.distillery || '';
+  document.getElementById('f-region').value      = b.region || '';
+  document.getElementById('f-type').value        = b.type || '';
+  document.getElementById('f-age').value         = b.age || '';
+  document.getElementById('f-abv').value         = b.abv || '';
+  document.getElementById('f-peat').value        = b.peat !== undefined ? b.peat : 0;
+  document.getElementById('f-notes').value       = b.notes || '';
+  document.getElementById('f-aromes').value      = (b.aromes || []).join(', ');
+  document.getElementById('f-price').value       = b.price || '';
+  document.getElementById('f-rating').value      = b.rating || '';
+  showScreen('screen-add');
+}
+
+function saveBottle() {
+  const name   = document.getElementById('f-name').value.trim();
+  const region = document.getElementById('f-region').value;
+  const type   = document.getElementById('f-type').value;
+  const errEl  = document.getElementById('form-error');
+
+  if (!name || !region || !type) {
+    errEl.textContent = 'Nom, région et type sont obligatoires.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const aromesRaw = document.getElementById('f-aromes').value;
+  const aromes = aromesRaw ? aromesRaw.split(',').map(a => a.trim().toLowerCase()).filter(Boolean) : [];
+
+  const editId = document.getElementById('edit-id').value;
+  const bottle = {
+    id:         editId || uid(),
+    name,
+    distillery: document.getElementById('f-distillery').value.trim(),
+    region,
+    type,
+    age:        parseInt(document.getElementById('f-age').value) || 0,
+    abv:        parseFloat(document.getElementById('f-abv').value) || 0,
+    peat:       parseInt(document.getElementById('f-peat').value) || 0,
+    notes:      document.getElementById('f-notes').value.trim(),
+    aromes,
+    price:      parseFloat(document.getElementById('f-price').value) || 0,
+    rating:     parseFloat(document.getElementById('f-rating').value) || 0,
+    addedAt:    editId ? (cave.find(b=>b.id===editId)?.addedAt || new Date().toISOString()) : new Date().toISOString(),
+  };
+
+  if (editId) {
+    cave = cave.map(b => b.id === editId ? bottle : b);
+    toast('✅ Bouteille modifiée');
+  } else {
+    cave.push(bottle);
+    toast('🥃 Bouteille ajoutée !');
+  }
+  saveCave(cave);
+  showScreen('screen-cave');
+}
+
+function deleteBottle() {
+  const id = document.getElementById('edit-id').value;
+  if (!id || !confirm('Supprimer cette bouteille ?')) return;
+  cave = cave.filter(b => b.id !== id);
+  saveCave(cave);
+  toast('🗑️ Supprimée');
+  showScreen('screen-cave');
+}
+
+// ════════════════════════════════════════════
+// WIZARD DE RECHERCHE
+// ════════════════════════════════════════════
+let wizCriteria = {};
+
+function startWizard() {
+  wizCriteria = {};
+  showScreen('screen-search');
+  document.getElementById('results-section').style.display = 'none';
+  document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-1').classList.add('active');
+  document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+  document.getElementById('wiz-progress').style.width = '25%';
+}
+
+function wizNext(step) {
+  // Sauvegarder les sélections de l'étape actuelle
+  if (step === 2) {
+    wizCriteria.types = getSelectedTags('tags-type');
+    document.getElementById('wiz-progress').style.width = '50%';
+  } else if (step === 3) {
+    wizCriteria.aromes = getSelectedTags('tags-arome');
+    document.getElementById('wiz-progress').style.width = '75%';
+  } else if (step === 4) {
+    wizCriteria.peat     = parseInt(document.getElementById('r-peat').value);
+    wizCriteria.strength = parseInt(document.getElementById('r-strength').value);
+    wizCriteria.age      = parseInt(document.getElementById('r-age').value);
+    document.getElementById('wiz-progress').style.width = '100%';
+  } else if (step === 1) {
+    document.getElementById('wiz-progress').style.width = '25%';
+  } else if (step === 3 && wizCriteria.aromes) {
+    document.getElementById('wiz-progress').style.width = '75%';
+  }
+  document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+  document.getElementById(`step-${step}`).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function getSelectedTags(containerId) {
+  return Array.from(document.querySelectorAll(`#${containerId} .tag.active`)).map(t => t.dataset.v);
+}
+
+function tagSelectOnly(el, containerId) {
+  document.querySelectorAll(`#${containerId} .tag`).forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+const RANGE_LABELS = {
+  peat:     ['Aucune', 'Très légère', 'Légère', 'Modérée', 'Intense', 'Très intense'],
+  strength: ['Doux (40%)', 'Léger (43%)', 'Équilibré (46%)', 'Puissant (50%+)', 'Cask strength'],
+  age:      ['NAS / Jeune', '8-12 ans', '12-18 ans', '18-25 ans', '25 ans+'],
+};
+function updateRangeLabel(key, val) {
+  document.getElementById(`lbl-${key}`).textContent = RANGE_LABELS[key][val] || val;
+}
+
+// ════════════════════════════════════════════
+// ALGORITHME DE RECOMMANDATION
+// ════════════════════════════════════════════
+function computeResults() {
+  wizCriteria.regions = getSelectedTags('tags-region');
+  const c = loadCave();
+  cave = c;
+
+  if (!c.length) {
+    document.getElementById('results-section').style.display = 'block';
+    document.getElementById('results-list').innerHTML = `<div class="card"><div class="empty-state"><div class="empty-icon">📭</div><h3>Cave vide !</h3><p>Ajoute des bouteilles pour obtenir des recommandations.</p></div></div>`;
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    return;
+  }
+
+  const scored = c.map(b => ({ bottle: b, score: scoreBottle(b, wizCriteria) }));
+  scored.sort((a, b) => b.score - a.score);
+  const top3 = scored.slice(0, 3);
+
+  document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('results-subtitle').textContent = `Sur ${c.length} bouteille${c.length>1?'s':''} dans ta cave`;
+
+  const ranks = ['🥇', '🥈', '🥉'];
+  document.getElementById('results-list').innerHTML = top3.map((item, i) => {
+    const b = item.bottle;
+    const pct = Math.round(item.score);
+    return `
+    <div class="card result-card ${i===0?'top':''}" onclick="toggleDetail('detail-${b.id}')">
+      <div class="result-rank">${ranks[i]}</div>
+      <div class="result-name">${b.name}</div>
+      <div class="result-distillery">${[b.distillery, b.region].filter(Boolean).join(' · ')}</div>
+      <div class="result-meta">
+        ${b.region ? `<span class="badge badge-region">📍 ${b.region}</span>` : ''}
+        ${b.type   ? `<span class="badge badge-type">🥃 ${b.type}</span>` : ''}
+        ${b.age    ? `<span class="badge badge-age">⏳ ${b.age} ans</span>` : ''}
+        ${b.abv    ? `<span class="badge badge-abv">💪 ${b.abv}%</span>` : ''}
+      </div>
+      <div class="result-match">
+        <div class="match-bar-bg"><div class="match-bar-fill" style="width:${pct}%"></div></div>
+        <div class="match-pct">${pct}%</div>
+      </div>
+      ${b.notes ? `<div class="result-notes">${b.notes.slice(0,120)}${b.notes.length>120?'…':''}</div>` : ''}
+      <div class="result-detail" id="detail-${b.id}">
+        ${b.aromes?.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">${b.aromes.map(a=>`<span class="flavor-tag">${a}</span>`).join('')}</div>` : ''}
+        <button class="btn-secondary" style="margin-top:12px;margin-bottom:0" onclick="event.stopPropagation();openModal('${b.id}')">📋 Voir la fiche complète</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  window.scrollTo(0, 0);
+}
+
+function toggleDetail(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
+function scoreBottle(b, crit) {
+  let score = 0;
+  let total = 0;
+
+  // Type (25 pts)
+  if (crit.types?.length && !crit.types.includes('indifférent')) {
+    total += 25;
+    const typeNorm = (b.type || '').toLowerCase();
+    if (crit.types.some(t => typeNorm.includes(t) || t.includes(typeNorm))) score += 25;
+  }
+
+  // Arômes (35 pts)
+  if (crit.aromes?.length) {
+    total += 35;
+    const bAromes = (b.aromes || []).map(a => a.toLowerCase());
+    const bNotes  = (b.notes  || '').toLowerCase();
+    let matches = 0;
+    for (const a of crit.aromes) {
+      if (bAromes.some(ba => ba.includes(a) || a.includes(ba)) || bNotes.includes(a)) matches++;
+    }
+    score += (matches / crit.aromes.length) * 35;
+  }
+
+  // Tourbe (20 pts)
+  if (crit.peat !== undefined) {
+    total += 20;
+    const diff = Math.abs((b.peat || 0) - crit.peat);
+    score += Math.max(0, 20 - diff * 6);
+  }
+
+  // Force / ABV (10 pts)
+  if (crit.strength !== undefined) {
+    total += 10;
+    const abvThresholds = [40, 43, 46, 50, 58];
+    const targetAbv = abvThresholds[crit.strength] || 46;
+    const diff = Math.abs((b.abv || 43) - targetAbv);
+    score += Math.max(0, 10 - diff * 0.5);
+  }
+
+  // Âge (10 pts)
+  if (crit.age !== undefined && crit.age > 0) {
+    total += 10;
+    const ageRanges = [[0,8],[8,12],[12,18],[18,25],[25,60]];
+    const [lo, hi] = ageRanges[crit.age] || [0,60];
+    const bAge = b.age || 0;
+    if (bAge >= lo && bAge < hi) score += 10;
+    else { const dist = Math.min(Math.abs(bAge-lo), Math.abs(bAge-hi)); score += Math.max(0, 10 - dist); }
+  }
+
+  // Région (bonus 10 pts)
+  if (crit.regions?.length && !crit.regions.includes('indifférent')) {
+    total += 10;
+    if (crit.regions.includes(b.region)) score += 10;
+  }
+
+  if (total === 0) return 60 + (b.rating || 5) * 3;
+  const base = (score / total) * 85;
+  const bonus = (b.rating || 5) / 10 * 15;
+  return Math.min(99, Math.round(base + bonus));
+}
+
+// ════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════
+// Initialiser les labels des ranges
+updateRangeLabel('peat', 0);
+updateRangeLabel('strength', 2);
+updateRangeLabel('age', 0);
+renderHome();
+</script>
+</body>
+</html>
