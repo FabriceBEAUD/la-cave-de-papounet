@@ -311,6 +311,56 @@ header {
   position: absolute; inset: 0;
 }
 
+/* ── PHOTO BOUTEILLE (formulaire) ── */
+.photo-picker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--gris);
+  border-radius: 14px;
+  padding: 14px;
+  margin-bottom: 20px;
+  border: 2px dashed #e0c88a;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.photo-picker:hover { border-color: var(--or); }
+.photo-preview {
+  width: 70px; height: 90px; flex-shrink: 0;
+  border-radius: 10px; overflow: hidden;
+  background: linear-gradient(160deg,#f0e8d0,#e0c88a);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem;
+  position: relative;
+}
+.photo-preview img { width:100%;height:100%;object-fit:cover;position:absolute;inset:0; }
+.photo-picker-label { flex: 1; }
+.photo-picker-label strong { display:block;font-size:0.9rem;color:var(--brun);font-weight:800;margin-bottom:3px; }
+.photo-picker-label span { font-size:0.78rem;color:#9a7a5a; }
+#photo-input { display: none; }
+
+/* ── RÉGIONS (cartes wizard) ── */
+.region-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-bottom: 20px;
+}
+.region-card {
+  border: 2px solid #e8d5b0;
+  border-radius: 13px;
+  padding: 12px 10px;
+  text-align: center;
+  cursor: pointer;
+  background: white;
+  transition: all 0.15s;
+  user-select: none;
+}
+.region-card:hover { border-color: var(--or); transform: translateY(-1px); }
+.region-card.active { border-color: var(--or); background: linear-gradient(135deg,#fdf6e3,#fef9ee); box-shadow: 0 3px 10px rgba(184,134,11,0.2); }
+.region-card .r-flag { font-size:1.5rem; display:block; margin-bottom:4px; }
+.region-card .r-name { font-size:0.82rem; font-weight:800; color:var(--brun); display:block; }
+
 /* ── RÉSULTATS ── */
 .result-card {
   background: white;
@@ -794,6 +844,45 @@ header {
         </div>
         <button class="btn-secondary" onclick="wizNext(2)" style="margin-top:4px">← Retour</button>
       </div>
+
+      <!-- Étape 4 : Région -->
+      <div class="wizard-step" id="step-4">
+        <div class="wiz-question">Une région préférée ?</div>
+        <div class="wiz-hint">Optionnel — tape "Peu importe" pour tout voir.</div>
+        <div class="region-grid">
+          <div class="region-card" data-region="Highlands" onclick="regionPick(this)">
+            <span class="r-flag">🏔️</span><span class="r-name">Highlands</span>
+          </div>
+          <div class="region-card" data-region="Speyside" onclick="regionPick(this)">
+            <span class="r-flag">🌊</span><span class="r-name">Speyside</span>
+          </div>
+          <div class="region-card" data-region="Islay" onclick="regionPick(this)">
+            <span class="r-flag">🌫️</span><span class="r-name">Islay</span>
+          </div>
+          <div class="region-card" data-region="Islands" onclick="regionPick(this)">
+            <span class="r-flag">🏝️</span><span class="r-name">Islands</span>
+          </div>
+          <div class="region-card" data-region="Japon" onclick="regionPick(this)">
+            <span class="r-flag">🇯🇵</span><span class="r-name">Japon</span>
+          </div>
+          <div class="region-card" data-region="Irlande" onclick="regionPick(this)">
+            <span class="r-flag">🇮🇪</span><span class="r-name">Irlande</span>
+          </div>
+          <div class="region-card" data-region="USA" onclick="regionPick(this)">
+            <span class="r-flag">🇺🇸</span><span class="r-name">USA</span>
+          </div>
+          <div class="region-card" data-region="France" onclick="regionPick(this)">
+            <span class="r-flag">🇫🇷</span><span class="r-name">France</span>
+          </div>
+          <div class="region-card" data-region="Taïwan" onclick="regionPick(this)">
+            <span class="r-flag">🇹🇼</span><span class="r-name">Taïwan</span>
+          </div>
+          <div class="region-card" data-region="" onclick="regionPick(this)">
+            <span class="r-flag">🎲</span><span class="r-name">Peu importe</span>
+          </div>
+        </div>
+        <button class="btn-secondary" onclick="wizNext(3)" style="margin-top:4px">← Retour</button>
+      </div>
     </div>
 
     <!-- Résultats -->
@@ -841,6 +930,17 @@ header {
       </div>
       <div class="form-error" id="form-error"></div>
       <input type="hidden" id="edit-id">
+
+      <!-- Photo de la bouteille -->
+      <input type="file" id="photo-input" accept="image/*" capture="environment" onchange="handlePhoto(this)">
+      <div class="photo-picker" onclick="document.getElementById('photo-input').click()">
+        <div class="photo-preview" id="photo-preview">📷</div>
+        <div class="photo-picker-label">
+          <strong id="photo-label">Ajouter une photo</strong>
+          <span id="photo-sub">Appuie pour prendre une photo ou choisir dans la galerie</span>
+        </div>
+      </div>
+
       <div class="field">
         <label>Nom du whisky *</label>
         <input type="text" id="f-name" placeholder="Ex : Lagavulin 16 ans">
@@ -863,6 +963,8 @@ header {
             <option>Japon</option>
             <option>USA</option>
             <option>Irlande</option>
+            <option>France</option>
+            <option>Taïwan</option>
             <option>Autre</option>
           </select>
         </div>
@@ -1198,6 +1300,9 @@ function resetAddForm() {
   ['f-age','f-abv','f-price','f-rating'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-peat').value = 0;
   document.getElementById('form-error').style.display = 'none';
+  document.getElementById('photo-input').value = '';
+  currentPhoto = null;
+  renderPhotoPreview(null);
 }
 
 function openEditForm(id) {
@@ -1218,6 +1323,8 @@ function openEditForm(id) {
   document.getElementById('f-aromes').value      = (b.aromes || []).join(', ');
   document.getElementById('f-price').value       = b.price || '';
   document.getElementById('f-rating').value      = b.rating || '';
+  currentPhoto = b.photo || null;
+  renderPhotoPreview(currentPhoto);
   showScreen('screen-add');
 }
 
@@ -1250,6 +1357,7 @@ function saveBottle() {
     aromes,
     price:      parseFloat(document.getElementById('f-price').value) || 0,
     rating:     parseFloat(document.getElementById('f-rating').value) || 0,
+    photo:      currentPhoto || (editId ? (cave.find(b=>b.id===editId)?.photo || null) : null),
     addedAt:    editId ? (cave.find(b=>b.id===editId)?.addedAt || new Date().toISOString()) : new Date().toISOString(),
   };
 
@@ -1331,7 +1439,7 @@ const REGION_COLORS = {
 };
 
 function bottleImgHtml(b, cls = 'bottle-img-wrap') {
-  const img = BOTTLE_IMAGES[b.name];
+  const img = b.photo || BOTTLE_IMAGES[b.name];
   const color = REGION_COLORS[b.region] || '#b09060';
   const emoji = b.peat >= 3 ? '🔥' : b.region === 'Japon' ? '🎋' : b.region === 'Irlande' ? '☘️' : '🥃';
   return `<div class="${cls}" style="background:${color}20;border:2px solid ${color}40">
@@ -1360,8 +1468,8 @@ function startWizard() {
   document.getElementById('results-section').style.display = 'none';
   document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
   document.getElementById('step-1').classList.add('active');
-  document.querySelectorAll('.mood-card, .choice-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('wiz-progress').style.width = '33%';
+  document.querySelectorAll('.mood-card, .choice-btn, .region-card').forEach(el => el.classList.remove('active'));
+  document.getElementById('wiz-progress').style.width = '25%';
 }
 
 function moodPick(el) {
@@ -1375,7 +1483,6 @@ function smokePick(el) {
   document.querySelectorAll('#step-2 .choice-btn').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   wizCriteria.smoke = parseInt(el.dataset.smoke);
-  document.getElementById('wiz-progress').style.width = '66%';
   setTimeout(() => wizNext(3), 300);
 }
 
@@ -1383,13 +1490,19 @@ function strengthPick(el) {
   document.querySelectorAll('#step-3 .choice-btn').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   wizCriteria.strength = parseInt(el.dataset.strength);
-  document.getElementById('wiz-progress').style.width = '100%';
+  setTimeout(() => wizNext(4), 300);
+}
+
+function regionPick(el) {
+  document.querySelectorAll('.region-card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  wizCriteria.region = el.dataset.region;
   setTimeout(() => computeResults(), 350);
 }
 
 function wizNext(step) {
-  const pcts = { 1:'33%', 2:'66%', 3:'100%' };
-  document.getElementById('wiz-progress').style.width = pcts[step] || '33%';
+  const pcts = { 1:'25%', 2:'50%', 3:'75%', 4:'100%' };
+  document.getElementById('wiz-progress').style.width = pcts[step] || '25%';
   document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
   document.getElementById(`step-${step}`).classList.add('active');
   window.scrollTo(0, 0);
@@ -1497,10 +1610,49 @@ function scoreBottle(b, crit) {
     score += Math.max(0, 30 - diff * 1.2);
   }
 
+  // Région (bonus 15 pts)
+  if (crit.region) {
+    total += 15;
+    if (b.region === crit.region) score += 15;
+  }
+
   if (total === 0) return 60 + (b.rating || 5) * 4;
   const base = (score / total) * 85;
   const bonus = (b.rating || 5) / 10 * 15;
   return Math.min(99, Math.round(base + bonus));
+}
+
+// ════════════════════════════════════════════
+// PHOTO BOUTEILLE
+// ════════════════════════════════════════════
+let currentPhoto = null;
+
+function handlePhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 600;
+      const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+      canvas.width  = Math.round(img.width  * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      currentPhoto = canvas.toDataURL('image/jpeg', 0.78);
+      renderPhotoPreview(currentPhoto);
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderPhotoPreview(src) {
+  const wrap = document.getElementById('photo-preview');
+  wrap.innerHTML = src ? `<img src="${src}" alt="photo">` : '📷';
+  document.getElementById('photo-label').textContent = src ? '✅ Photo enregistrée' : 'Ajouter une photo';
+  document.getElementById('photo-sub').textContent   = src ? 'Appuie pour changer la photo' : 'Appuie pour prendre une photo ou choisir dans la galerie';
 }
 
 // ════════════════════════════════════════════
