@@ -1395,7 +1395,7 @@ function resetAddForm() {
 function openEditForm(id) {
   const b = cave.find(x => x.id === id);
   if (!b) return;
-  resetAddForm();
+  showScreen('screen-add');
   document.getElementById('add-title').textContent = '✏️ Modifier la bouteille';
   document.getElementById('edit-id').value = id;
   document.getElementById('btn-delete').style.display = 'block';
@@ -1412,7 +1412,6 @@ function openEditForm(id) {
   document.getElementById('f-rating').value      = b.rating || '';
   currentPhoto = b.photo || null;
   renderPhotoPreview(currentPhoto);
-  showScreen('screen-add');
 }
 
 function saveBottle() {
