@@ -1669,10 +1669,19 @@ const REGION_INFO = {
   'USA':          { flag:'🇺🇸', label:'États-Unis',          desc:'Bourbon doux, vanille, caramel' },
 };
 
+const SCOT_REGIONS = ['Highlands','Lowlands','Speyside','Islay','Campbeltown','Islands','Écosse'];
+
 function buildRegionGrid() {
   const regions = [...new Set(loadCave().map(b => b.region).filter(Boolean))].sort();
   const grid = document.getElementById('region-grid');
-  grid.innerHTML = regions.map(r => {
+  const hasScotland = regions.some(r => SCOT_REGIONS.includes(r));
+  const scotCard = hasScotland ? `
+    <div class="region-card" data-region="__scotland" onclick="regionPick(this)">
+      <span class="r-flag">🏴󠁧󠁢󠁳󠁣󠁴󠁿</span>
+      <span class="r-name">Écosse</span>
+      <span class="r-desc">Toutes les régions écossaises</span>
+    </div>` : '';
+  grid.innerHTML = scotCard + regions.map(r => {
     const info = REGION_INFO[r] || { flag:'🗺️', label: r, desc:'' };
     return `<div class="region-card" data-region="${r}" onclick="regionPick(this)">
       <span class="r-flag">${info.flag}</span>
@@ -1815,7 +1824,10 @@ function scoreBottle(b, crit) {
   // Région (bonus 15 pts)
   if (crit.region) {
     total += 15;
-    if (b.region === crit.region) score += 15;
+    const match = crit.region === '__scotland'
+      ? SCOT_REGIONS.includes(b.region)
+      : b.region === crit.region;
+    if (match) score += 15;
   }
 
   if (total === 0) return 60 + (b.rating || 5) * 4;
