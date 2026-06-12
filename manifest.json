@@ -1,0 +1,16 @@
+{
+  "name": "La Cave de Papounet",
+  "short_name": "Cave Papounet",
+  "description": "Gestion de cave à whisky — trouve la bouteille parfaite pour ce soir",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#140a03",
+  "theme_color": "#140a03",
+  "orientation": "portrait",
+  "lang": "fr",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
