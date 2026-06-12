@@ -1801,12 +1801,21 @@ async function scanBottle(photo) {
   label.textContent = '🔎 Analyse de l\'étiquette…';
   sub.textContent   = 'Identification du whisky en cours';
   try {
-    const res = await fetch('/api/scan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image: photo }),
-    });
-    const b = await res.json();
+    // Essaie l'API locale, puis celle du projet fitnestival (qui a la clé Mistral)
+    const endpoints = ['/api/scan', 'https://fitnestival2027-2.vercel.app/api/scan'];
+    let res, b;
+    for (const url of endpoints) {
+      try {
+        res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image: photo }),
+        });
+        b = await res.json();
+        if (res.ok || res.status !== 503) break;
+      } catch { res = null; b = null; }
+    }
+    if (!res || !b) throw new Error('aucune API disponible');
     if (!res.ok || b.error || !b.name) {
       label.textContent = '✅ Photo enregistrée';
       sub.textContent   = 'Identification impossible — remplis la fiche à la main';
