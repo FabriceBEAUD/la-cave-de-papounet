@@ -566,7 +566,8 @@ header {
 }
 .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--or); }
 .field textarea { resize: vertical; min-height: 70px; }
-.field input::placeholder, .field textarea::placeholder { color: rgba(243,231,200,0.3); }
+.field input::placeholder, .field textarea::placeholder, #cave-search::placeholder { color: rgba(243,231,200,0.3); }
+#cave-search:focus { border-color: var(--or-vif); }
 .field select { color-scheme: dark; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .form-error {
@@ -931,6 +932,8 @@ header {
         <div style="font-size:1.1rem;font-weight:900;color:var(--brun)">📦 Ma Cave</div>
         <button class="btn-primary" style="width:auto;padding:10px 18px;margin:0;font-size:0.85rem" onclick="showScreen('screen-add')">+ Ajouter</button>
       </div>
+      <input type="text" id="cave-search" placeholder="🔍 Chercher par nom ou distillerie…" oninput="renderCave()"
+        style="width:100%;border:1px solid rgba(212,160,23,0.3);border-radius:99px;padding:11px 16px;font-size:0.9rem;outline:none;background:rgba(255,255,255,0.04);color:var(--brun);margin-bottom:12px;font-family:inherit">
       <div class="cave-filters" id="cave-filters">
         <button class="filter-btn active" data-f="tous" onclick="filterCave(this)">Tous</button>
         <button class="filter-btn" data-f="Highlands" onclick="filterCave(this)">Highlands</button>
@@ -1113,7 +1116,40 @@ function loadCave() {
   catch { return []; }
 }
 function saveCave(cave) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cave));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cave));
+    return true;
+  } catch (e) {
+    toast('⚠️ Mémoire pleine ! Photo trop lourde — réessaie, elle sera compressée davantage.');
+    return false;
+  }
+}
+
+// Recompresse une image data-URL (utilisé pour libérer de l'espace)
+function recompress(dataUrl, maxDim, quality) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const ratio = Math.min(maxDim / img.width, maxDim / img.height, 1);
+      const canvas = document.createElement('canvas');
+      canvas.width  = Math.round(img.width  * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+// Migration : recompresse les anciennes photos (600px/78%) en 420px/60% pour libérer le stockage
+async function shrinkStoredPhotos() {
+  const c = loadCave();
+  const big = c.filter(b => b.photo && b.photo.length > 60000);
+  if (!big.length) return;
+  for (const b of big) b.photo = await recompress(b.photo, 420, 0.6);
+  cave = c;
+  if (saveCave(c)) toast(`📦 ${big.length} photo${big.length>1?'s':''} optimisée${big.length>1?'s':''} — espace libéré`);
 }
 
 let cave = loadCave();
@@ -1267,10 +1303,14 @@ function renderCave(filter) {
   if (filter) caveFilter = filter;
   const c = loadCave();
   cave = c;
-  const filtered = caveFilter === 'tous' ? c : c.filter(b => b.region === caveFilter);
+  let filtered = caveFilter === 'tous' ? c : c.filter(b => b.region === caveFilter);
+  const q = normName(document.getElementById('cave-search')?.value || '');
+  if (q) filtered = filtered.filter(b => normName(b.name).includes(q) || normName(b.distillery).includes(q));
   const el = document.getElementById('cave-list');
   if (!filtered.length) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><h3>Cave vide ici</h3><p>Ajoute ta première bouteille !</p></div>`;
+    el.innerHTML = q
+      ? `<div class="empty-state"><div class="empty-icon">🔍</div><h3>Aucun résultat</h3><p>Aucune bouteille ne correspond à "${document.getElementById('cave-search').value}".</p></div>`
+      : `<div class="empty-state"><div class="empty-icon">📭</div><h3>Cave vide ici</h3><p>Ajoute ta première bouteille !</p></div>`;
     return;
   }
   el.innerHTML = filtered.map(b => `
@@ -1466,12 +1506,30 @@ function saveBottle() {
 
   if (editId) {
     cave = cave.map(b => b.id === editId ? bottle : b);
-    toast('✅ Bouteille modifiée');
   } else {
     cave.push(bottle);
-    toast('🥃 Bouteille ajoutée !');
   }
-  saveCave(cave);
+  if (!saveCave(cave)) {
+    // Stockage plein : on recompresse la photo très fort puis on retente
+    if (bottle.photo) {
+      recompress(bottle.photo, 300, 0.5).then(tiny => {
+        bottle.photo = tiny;
+        if (saveCave(cave)) {
+          toast(editId ? '✅ Bouteille modifiée' : '🥃 Bouteille ajoutée !');
+          showScreen('screen-cave');
+        } else {
+          bottle.photo = null;
+          if (saveCave(cave)) {
+            toast('🥃 Ajoutée sans photo (stockage plein)');
+            showScreen('screen-cave');
+          }
+        }
+      });
+      return;
+    }
+    return;
+  }
+  toast(editId ? '✅ Bouteille modifiée' : '🥃 Bouteille ajoutée !');
   showScreen('screen-cave');
 }
 
@@ -1784,10 +1842,14 @@ function handlePhoto(input) {
       canvas.width  = Math.round(img.width  * ratio);
       canvas.height = Math.round(img.height * ratio);
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-      currentPhoto = canvas.toDataURL('image/jpeg', 0.78);
-      renderPhotoPreview(currentPhoto);
+      // Version 600px pour l'analyse IA (plus lisible), version 420px pour le stockage
+      const scanVersion = canvas.toDataURL('image/jpeg', 0.78);
+      recompress(scanVersion, 420, 0.6).then(small => {
+        currentPhoto = small;
+        renderPhotoPreview(currentPhoto);
+      });
       // En mode ajout, on tente d'identifier la bouteille et de remplir la fiche
-      if (!document.getElementById('edit-id').value) scanBottle(currentPhoto);
+      if (!document.getElementById('edit-id').value) scanBottle(scanVersion);
     };
     img.src = e.target.result;
   };
@@ -1880,6 +1942,7 @@ function toast(msg) {
 // INIT
 // ════════════════════════════════════════════
 renderHome();
+shrinkStoredPhotos();
 </script>
 </body>
 </html>
