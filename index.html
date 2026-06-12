@@ -610,6 +610,47 @@ header {
 }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .modal-handle { width: 40px; height: 4px; background: rgba(212,160,23,0.22); border-radius: 99px; margin: 0 auto 20px; }
+
+/* Photo dans la fiche */
+#modal-photo-wrap {
+  width: 130px; height: 170px;
+  margin: 0 auto 16px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(212,160,23,0.35);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  cursor: zoom-in;
+  position: relative;
+}
+#modal-photo-wrap img { width: 100%; height: 100%; object-fit: cover; }
+#modal-photo-wrap::after {
+  content: '🔍';
+  position: absolute; bottom: 6px; right: 8px;
+  font-size: 0.85rem; opacity: 0.8;
+}
+
+/* Photo plein écran */
+#photo-lightbox {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.93);
+  z-index: 300;
+  align-items: center; justify-content: center;
+  flex-direction: column;
+  cursor: zoom-out;
+}
+#photo-lightbox.open { display: flex; }
+#photo-lightbox img {
+  max-width: 94vw; max-height: 84vh;
+  border-radius: 12px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.8);
+}
+.photo-lightbox-hint {
+  margin-top: 16px;
+  font-size: 0.78rem;
+  color: rgba(243,231,200,0.5);
+  letter-spacing: 0.5px;
+}
 .modal-title { font-family: Georgia, serif; font-size: 1.45rem; font-weight: 500; color: var(--brun); margin-bottom: 4px; }
 .modal-sub   { font-size: 0.82rem; color: #c0a070; margin-bottom: 16px; }
 .modal-section { margin-bottom: 16px; }
@@ -1072,6 +1113,7 @@ header {
 <div id="modal-overlay" class="modal-overlay" onclick="closeModal(event)">
   <div class="modal-box">
     <div class="modal-handle"></div>
+    <div id="modal-photo-wrap" style="display:none" onclick="openPhotoFull()"></div>
     <div class="modal-title" id="modal-name"></div>
     <div class="modal-sub"   id="modal-sub"></div>
     <div class="modal-section">
@@ -1094,6 +1136,12 @@ header {
     <button class="btn-secondary" style="margin-bottom:8px" onclick="editFromModal()">✏️ Modifier</button>
     <button class="btn-danger" onclick="deleteFromModal()">🗑️ Supprimer</button>
   </div>
+</div>
+
+<!-- Photo plein écran -->
+<div id="photo-lightbox" onclick="closePhotoFull()">
+  <img id="photo-lightbox-img" src="" alt="Photo de la bouteille">
+  <div class="photo-lightbox-hint">Touche l'écran pour fermer</div>
 </div>
 
 <!-- Toast -->
@@ -1380,8 +1428,31 @@ function openModal(id) {
   if (b.peat !== undefined) extra.push(`<div class="detail-row"><span>Tourbe</span><span>${'🟤'.repeat(b.peat) || 'Aucune'}</span></div>`);
   document.getElementById('modal-extra').innerHTML = extra.join('');
 
+  // Photo de la bouteille (photo perso prioritaire, sinon image catalogue)
+  const photoWrap = document.getElementById('modal-photo-wrap');
+  const photoSrc = b.photo || BOTTLE_IMAGES[b.name];
+  if (photoSrc) {
+    photoWrap.innerHTML = `<img src="${photoSrc}" alt="${b.name}" onerror="document.getElementById('modal-photo-wrap').style.display='none'">`;
+    photoWrap.style.display = 'block';
+    photoWrap.dataset.src = photoSrc;
+  } else {
+    photoWrap.style.display = 'none';
+    photoWrap.dataset.src = '';
+  }
+
   updateEmptyBtn(!!b.empty);
   document.getElementById('modal-overlay').classList.add('open');
+}
+
+function openPhotoFull() {
+  const src = document.getElementById('modal-photo-wrap').dataset.src;
+  if (!src) return;
+  document.getElementById('photo-lightbox-img').src = src;
+  document.getElementById('photo-lightbox').classList.add('open');
+}
+
+function closePhotoFull() {
+  document.getElementById('photo-lightbox').classList.remove('open');
 }
 
 function closeModal(e) {
