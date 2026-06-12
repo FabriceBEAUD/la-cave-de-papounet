@@ -954,12 +954,12 @@ header {
         <button class="filter-btn" data-f="Taïwan" onclick="filterCave(this)">Taïwan 🇹🇼</button>
         <button class="filter-btn" data-f="Écosse" onclick="filterCave(this)">Blended 🥃</button>
       </div>
-      <div id="cave-list"></div>
-      <div style="display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(212,160,23,0.15)">
-        <button class="btn-secondary" style="margin:0;flex:1" onclick="exportCave()">📤 Exporter ma cave</button>
-        <button class="btn-secondary" style="margin:0;flex:1" onclick="document.getElementById('import-input').click()">📥 Importer</button>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button class="btn-secondary" style="margin:0;flex:1;padding:9px;font-size:0.78rem" onclick="exportCave()">📤 Exporter</button>
+        <button class="btn-secondary" style="margin:0;flex:1;padding:9px;font-size:0.78rem" onclick="document.getElementById('import-input').click()">📥 Importer</button>
         <input type="file" id="import-input" accept=".json,application/json" style="display:none" onchange="importCave(this)">
       </div>
+      <div id="cave-list"></div>
     </div>
   </div>
 

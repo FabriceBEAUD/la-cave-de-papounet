@@ -1,5 +1,5 @@
 // Service worker — La Cave de Papounet
-const CACHE = 'cave-papounet-v1';
+const CACHE = 'cave-papounet-v2';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', e => {
