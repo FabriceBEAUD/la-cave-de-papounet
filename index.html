@@ -955,6 +955,11 @@ header {
         <button class="filter-btn" data-f="Écosse" onclick="filterCave(this)">Blended 🥃</button>
       </div>
       <div id="cave-list"></div>
+      <div style="display:flex;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(212,160,23,0.15)">
+        <button class="btn-secondary" style="margin:0;flex:1" onclick="exportCave()">📤 Exporter ma cave</button>
+        <button class="btn-secondary" style="margin:0;flex:1" onclick="document.getElementById('import-input').click()">📥 Importer</button>
+        <input type="file" id="import-input" accept=".json,application/json" style="display:none" onchange="importCave(this)">
+      </div>
     </div>
   </div>
 
@@ -1964,6 +1969,48 @@ function toast(msg) {
 // ════════════════════════════════════════════
 renderHome();
 shrinkStoredPhotos();
+
+// ════════════════════════════════════════════
+// EXPORT / IMPORT DE LA CAVE
+// ════════════════════════════════════════════
+function exportCave() {
+  const data = JSON.stringify({ app: 'cave-papounet', exportedAt: new Date().toISOString(), bottles: loadCave() });
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `ma-cave-papounet-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  toast('📤 Cave exportée — fichier téléchargé');
+}
+
+function importCave(input) {
+  const file = input.files[0];
+  input.value = '';
+  if (!file) return;
+  requireOwner(() => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        const bottles = data.bottles || data;
+        if (!Array.isArray(bottles) || !bottles.length || !bottles[0].name) throw new Error('format');
+        const withPhotos = bottles.filter(b => b.photo).length;
+        if (!confirm(`Importer ${bottles.length} bouteille${bottles.length>1?'s':''} (dont ${withPhotos} avec photo) ?\n\n⚠️ Cela REMPLACE ta cave actuelle (${loadCave().length} bouteilles).`)) return;
+        cave = bottles;
+        if (saveCave(cave)) {
+          renderCave();
+          renderHome();
+          toast(`📥 ${bottles.length} bouteilles importées !`);
+        }
+      } catch {
+        toast('❌ Fichier invalide — utilise un export de cette app');
+      }
+    };
+    reader.readAsText(file);
+  });
+}
 
 // PWA — service worker
 if ('serviceWorker' in navigator) {
