@@ -1426,6 +1426,23 @@ function saveBottle() {
     return;
   }
 
+  const dup = checkDuplicate(name, false);
+  if (dup) {
+    const msg = dup.empty
+      ? `"${dup.name}" est déjà dans ta cave mais marquée VIDE.\n\nOK = la remettre en cave (pleine)\nAnnuler = ne rien faire`
+      : `"${dup.name}" est déjà dans ta cave !\n\nVeux-tu vraiment l'ajouter en double ?`;
+    if (dup.empty) {
+      if (confirm(msg)) {
+        dup.empty = false;
+        saveCave(cave);
+        toast('✅ Bouteille remise en cave !');
+        showScreen('screen-cave');
+      }
+      return;
+    }
+    if (!confirm(msg)) return;
+  }
+
   const aromesRaw = document.getElementById('f-aromes').value;
   const aromes = aromesRaw ? aromesRaw.split(',').map(a => a.trim().toLowerCase()).filter(Boolean) : [];
 
@@ -1769,10 +1786,66 @@ function handlePhoto(input) {
       canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
       currentPhoto = canvas.toDataURL('image/jpeg', 0.78);
       renderPhotoPreview(currentPhoto);
+      // En mode ajout, on tente d'identifier la bouteille et de remplir la fiche
+      if (!document.getElementById('edit-id').value) scanBottle(currentPhoto);
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
+}
+
+// ── Analyse de l'étiquette par IA → remplissage automatique ──
+async function scanBottle(photo) {
+  const label = document.getElementById('photo-label');
+  const sub   = document.getElementById('photo-sub');
+  label.textContent = '🔎 Analyse de l\'étiquette…';
+  sub.textContent   = 'Identification du whisky en cours';
+  try {
+    const res = await fetch('/api/scan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: photo }),
+    });
+    const b = await res.json();
+    if (!res.ok || b.error || !b.name) {
+      label.textContent = '✅ Photo enregistrée';
+      sub.textContent   = 'Identification impossible — remplis la fiche à la main';
+      return;
+    }
+    const set = (id, v) => { if (v !== undefined && v !== null && v !== '') document.getElementById(id).value = v; };
+    set('f-name',       b.name);
+    set('f-distillery', b.distillery);
+    set('f-region',     b.region);
+    set('f-type',       b.type);
+    set('f-age',        b.age   || '');
+    set('f-abv',        b.abv   || '');
+    set('f-notes',      b.notes);
+    if (Array.isArray(b.aromes) && b.aromes.length) set('f-aromes', b.aromes.join(', '));
+    if (b.peat !== undefined) document.getElementById('f-peat').value = b.peat;
+    label.textContent = '✨ Fiche remplie automatiquement';
+    sub.textContent   = b.confidence === 'haute'
+      ? 'Vérifie quand même les infos avant d\'enregistrer'
+      : 'Identification incertaine — vérifie bien les infos';
+    checkDuplicate(b.name, true);
+  } catch {
+    label.textContent = '✅ Photo enregistrée';
+    sub.textContent   = 'Analyse indisponible — remplis la fiche à la main';
+  }
+}
+
+// ── Détection de doublons ──
+function normName(s) {
+  return (s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function checkDuplicate(name, silent) {
+  const n = normName(name);
+  if (!n) return null;
+  const editId = document.getElementById('edit-id').value;
+  const dup = loadCave().find(b => b.id !== editId && normName(b.name) === n);
+  if (dup && silent) toast(`⚠️ "${dup.name}" est déjà dans ta cave !`);
+  return dup;
 }
 
 function renderPhotoPreview(src) {
